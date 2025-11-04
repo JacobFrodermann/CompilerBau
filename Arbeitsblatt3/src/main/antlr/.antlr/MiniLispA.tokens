@@ -1,0 +1,14 @@
+T__0=1
+T__1=2
+TRUE=3
+FALSE=4
+ID=5
+NUMBER=6
+OP=7
+STRING=8
+COMMENT=9
+WS=10
+'('=1
+')'=2
+'true'=3
+'false'=4

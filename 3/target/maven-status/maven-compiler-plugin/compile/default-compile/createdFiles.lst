@@ -1,0 +1,8 @@
+org/uni/testParser$AssignContext.class
+org/uni/testParser$ExprContext.class
+org/uni/testParser.class
+org/uni/testLexer.class
+org/uni/testListener.class
+org/uni/antlr/Main.class
+org/uni/testBaseListener.class
+org/uni/testParser$ProgContext.class
