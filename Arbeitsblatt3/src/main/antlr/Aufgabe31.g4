@@ -6,7 +6,7 @@ program :  statement* EOF ;
 
 // while und if
 loop   :  'while' expr 'do' statement+;
-condition : 'if' expr 'do' statement+ ('else do' statement+)? 'end' ;
+condition : 'if' expr 'do' statement+ ('else' 'do' statement+)? 'end' ;
 // Variablen (ohne typen wie in dem Beispiel)
 vardec  :  ID (ASSIGN expr)?;
 assign  :  ID ASSIGN expr;
@@ -15,7 +15,7 @@ expr : comparison | STRING ; // String hier einzeln, damit man keine Strings mul
 comparison : addition ( (EQUAL | NEQUAL | LESSTHAN | GREATERTHAN) addition )* ;
 addition : multiplication ( (PLUS | MINUS) multiplication )* ;
 multiplication : idOrNum ( (MUL | DIV) idOrNum )* ; // Multiplikation mit IDs oder Zahlen, aber ohne Strings
-
+// 1 == 1 == 1 >= 1
 idOrNum : ID
     | NUMBER
     | '(' expr ')' // fuer Klammern , zb 1 + (2 * 3)
@@ -43,7 +43,7 @@ MUL     : '*';
 EQUAL   : '==';
 NEQUAL  : '!=';
 // Kommentare: Anfang Schraegstriche, danach alles was kein newline ist
-COMMENT : '//' ~[\r\n]* -> skip;
+COMMENT : '#' ~[\r\n]* -> skip;
 WS      : [ \t]+ -> skip ;
 NEWLINE : [\r\n]+ -> skip;
 
