@@ -14,8 +14,9 @@ public class Main {
   static void main(String... args) throws IOException, URISyntaxException {
     IO.println("Hello World!");
 
+
+    String input = "a := 0 \n if a > 3 do \n   b := 4 \n else do \n c := 10 \n end";
     // Einlesen über Konsole/Prompt
-    String input = IO.readln("expr?> ");
 
     //HelloLexer lexer = new HelloLexer(CharStreams.fromString(input));
     //CommonTokenStream tokens = new CommonTokenStream(lexer);

@@ -1,4 +1,4 @@
-// Generated from c:/Users/xenia/Documents/GitHub/dbshit2/CompilerbauAB3/src/main/antlr/my/pkg/HelloPackage.g4 by ANTLR 4.13.1
+// Generated from /home/jef/git/CompilerBau/Arbeitsblatt3/src/main/antlr/my/pkg/HelloPackage.g4 by ANTLR 4.9.2
 
 package my.pkg;
 
@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class HelloPackageParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -91,7 +91,6 @@ public class HelloPackageParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class StartContext extends ParserRuleContext {
 		public List<StmtContext> stmt() {
 			return getRuleContexts(StmtContext.class);
@@ -139,7 +138,6 @@ public class HelloPackageParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class StmtContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(HelloPackageParser.ID, 0); }
 		public ExprContext expr() {
@@ -193,7 +191,6 @@ public class HelloPackageParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ExprContext extends ParserRuleContext {
 		public List<TermContext> term() {
 			return getRuleContexts(TermContext.class);
@@ -245,7 +242,6 @@ public class HelloPackageParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class TermContext extends ParserRuleContext {
 		public List<AtomContext> atom() {
 			return getRuleContexts(AtomContext.class);
@@ -297,7 +293,6 @@ public class HelloPackageParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class AtomContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(HelloPackageParser.ID, 0); }
 		public TerminalNode NUM() { return getToken(HelloPackageParser.NUM, 0); }
@@ -338,34 +333,18 @@ public class HelloPackageParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u0007-\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
-		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0001"+
-		"\u0000\u0005\u0000\f\b\u0000\n\u0000\f\u0000\u000f\t\u0000\u0001\u0001"+
-		"\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001"+
-		"\u0001\u0001\u0003\u0001\u0019\b\u0001\u0001\u0002\u0001\u0002\u0001\u0002"+
-		"\u0005\u0002\u001e\b\u0002\n\u0002\f\u0002!\t\u0002\u0001\u0003\u0001"+
-		"\u0003\u0001\u0003\u0005\u0003&\b\u0003\n\u0003\f\u0003)\t\u0003\u0001"+
-		"\u0004\u0001\u0004\u0001\u0004\u0000\u0000\u0005\u0000\u0002\u0004\u0006"+
-		"\b\u0000\u0001\u0001\u0000\u0005\u0006+\u0000\r\u0001\u0000\u0000\u0000"+
-		"\u0002\u0018\u0001\u0000\u0000\u0000\u0004\u001a\u0001\u0000\u0000\u0000"+
-		"\u0006\"\u0001\u0000\u0000\u0000\b*\u0001\u0000\u0000\u0000\n\f\u0003"+
-		"\u0002\u0001\u0000\u000b\n\u0001\u0000\u0000\u0000\f\u000f\u0001\u0000"+
-		"\u0000\u0000\r\u000b\u0001\u0000\u0000\u0000\r\u000e\u0001\u0000\u0000"+
-		"\u0000\u000e\u0001\u0001\u0000\u0000\u0000\u000f\r\u0001\u0000\u0000\u0000"+
-		"\u0010\u0011\u0005\u0005\u0000\u0000\u0011\u0012\u0005\u0001\u0000\u0000"+
-		"\u0012\u0013\u0003\u0004\u0002\u0000\u0013\u0014\u0005\u0002\u0000\u0000"+
-		"\u0014\u0019\u0001\u0000\u0000\u0000\u0015\u0016\u0003\u0004\u0002\u0000"+
-		"\u0016\u0017\u0005\u0002\u0000\u0000\u0017\u0019\u0001\u0000\u0000\u0000"+
-		"\u0018\u0010\u0001\u0000\u0000\u0000\u0018\u0015\u0001\u0000\u0000\u0000"+
-		"\u0019\u0003\u0001\u0000\u0000\u0000\u001a\u001f\u0003\u0006\u0003\u0000"+
-		"\u001b\u001c\u0005\u0003\u0000\u0000\u001c\u001e\u0003\u0006\u0003\u0000"+
-		"\u001d\u001b\u0001\u0000\u0000\u0000\u001e!\u0001\u0000\u0000\u0000\u001f"+
-		"\u001d\u0001\u0000\u0000\u0000\u001f \u0001\u0000\u0000\u0000 \u0005\u0001"+
-		"\u0000\u0000\u0000!\u001f\u0001\u0000\u0000\u0000\"\'\u0003\b\u0004\u0000"+
-		"#$\u0005\u0004\u0000\u0000$&\u0003\b\u0004\u0000%#\u0001\u0000\u0000\u0000"+
-		"&)\u0001\u0000\u0000\u0000\'%\u0001\u0000\u0000\u0000\'(\u0001\u0000\u0000"+
-		"\u0000(\u0007\u0001\u0000\u0000\u0000)\'\u0001\u0000\u0000\u0000*+\u0007"+
-		"\u0000\u0000\u0000+\t\u0001\u0000\u0000\u0000\u0004\r\u0018\u001f\'";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\t/\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\7\2\16\n\2\f\2\16\2\21\13\2\3\3\3\3\3\3"+
+		"\3\3\3\3\3\3\3\3\3\3\5\3\33\n\3\3\4\3\4\3\4\7\4 \n\4\f\4\16\4#\13\4\3"+
+		"\5\3\5\3\5\7\5(\n\5\f\5\16\5+\13\5\3\6\3\6\3\6\2\2\7\2\4\6\b\n\2\3\3\2"+
+		"\7\b\2-\2\17\3\2\2\2\4\32\3\2\2\2\6\34\3\2\2\2\b$\3\2\2\2\n,\3\2\2\2\f"+
+		"\16\5\4\3\2\r\f\3\2\2\2\16\21\3\2\2\2\17\r\3\2\2\2\17\20\3\2\2\2\20\3"+
+		"\3\2\2\2\21\17\3\2\2\2\22\23\7\7\2\2\23\24\7\3\2\2\24\25\5\6\4\2\25\26"+
+		"\7\4\2\2\26\33\3\2\2\2\27\30\5\6\4\2\30\31\7\4\2\2\31\33\3\2\2\2\32\22"+
+		"\3\2\2\2\32\27\3\2\2\2\33\5\3\2\2\2\34!\5\b\5\2\35\36\7\5\2\2\36 \5\b"+
+		"\5\2\37\35\3\2\2\2 #\3\2\2\2!\37\3\2\2\2!\"\3\2\2\2\"\7\3\2\2\2#!\3\2"+
+		"\2\2$)\5\n\6\2%&\7\6\2\2&(\5\n\6\2\'%\3\2\2\2(+\3\2\2\2)\'\3\2\2\2)*\3"+
+		"\2\2\2*\t\3\2\2\2+)\3\2\2\2,-\t\2\2\2-\13\3\2\2\2\6\17\32!)";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

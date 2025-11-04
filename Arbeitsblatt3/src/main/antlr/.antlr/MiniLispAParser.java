@@ -1,4 +1,4 @@
-// Generated from c:/Users/xenia/Documents/GitHub/dbshit2/CompilerbauAB3/src/main/antlr/MiniLispA.g4 by ANTLR 4.13.1
+// Generated from /home/jef/git/CompilerBau/Arbeitsblatt3/src/main/antlr/MiniLispA.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class MiniLispAParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -90,7 +90,6 @@ public class MiniLispAParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ProgramContext extends ParserRuleContext {
 		public TerminalNode EOF() { return getToken(MiniLispAParser.EOF, 0); }
 		public List<ExprContext> expr() {
@@ -125,7 +124,7 @@ public class MiniLispAParser extends Parser {
 				setState(13); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 378L) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << TRUE) | (1L << FALSE) | (1L << ID) | (1L << NUMBER) | (1L << STRING))) != 0) );
 			setState(15);
 			match(EOF);
 			}
@@ -141,7 +140,6 @@ public class MiniLispAParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ExprContext extends ParserRuleContext {
 		public LiteralContext literal() {
 			return getRuleContext(LiteralContext.class,0);
@@ -204,7 +202,6 @@ public class MiniLispAParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class LiteralContext extends ParserRuleContext {
 		public TerminalNode NUMBER() { return getToken(MiniLispAParser.NUMBER, 0); }
 		public TerminalNode STRING() { return getToken(MiniLispAParser.STRING, 0); }
@@ -225,7 +222,7 @@ public class MiniLispAParser extends Parser {
 			{
 			setState(22);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 344L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TRUE) | (1L << FALSE) | (1L << NUMBER) | (1L << STRING))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -246,7 +243,6 @@ public class MiniLispAParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class SymbolContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(MiniLispAParser.ID, 0); }
 		public SymbolContext(ParserRuleContext parent, int invokingState) {
@@ -276,7 +272,6 @@ public class MiniLispAParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ListContext extends ParserRuleContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -335,7 +330,7 @@ public class MiniLispAParser extends Parser {
 			setState(36);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 378L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << TRUE) | (1L << FALSE) | (1L << ID) | (1L << NUMBER) | (1L << STRING))) != 0)) {
 				{
 				{
 				setState(33);
@@ -362,34 +357,18 @@ public class MiniLispAParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\n*\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
-		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0001"+
-		"\u0000\u0004\u0000\f\b\u0000\u000b\u0000\f\u0000\r\u0001\u0000\u0001\u0000"+
-		"\u0001\u0001\u0001\u0001\u0001\u0001\u0003\u0001\u0015\b\u0001\u0001\u0002"+
-		"\u0001\u0002\u0001\u0003\u0001\u0003\u0001\u0004\u0001\u0004\u0005\u0004"+
-		"\u001d\b\u0004\n\u0004\f\u0004 \t\u0004\u0001\u0004\u0005\u0004#\b\u0004"+
-		"\n\u0004\f\u0004&\t\u0004\u0001\u0004\u0001\u0004\u0001\u0004\u0000\u0000"+
-		"\u0005\u0000\u0002\u0004\u0006\b\u0000\u0002\u0003\u0000\u0003\u0004\u0006"+
-		"\u0006\b\b\u0002\u0000\u0005\u0005\u0007\u0007)\u0000\u000b\u0001\u0000"+
-		"\u0000\u0000\u0002\u0014\u0001\u0000\u0000\u0000\u0004\u0016\u0001\u0000"+
-		"\u0000\u0000\u0006\u0018\u0001\u0000\u0000\u0000\b\u001a\u0001\u0000\u0000"+
-		"\u0000\n\f\u0003\u0002\u0001\u0000\u000b\n\u0001\u0000\u0000\u0000\f\r"+
-		"\u0001\u0000\u0000\u0000\r\u000b\u0001\u0000\u0000\u0000\r\u000e\u0001"+
-		"\u0000\u0000\u0000\u000e\u000f\u0001\u0000\u0000\u0000\u000f\u0010\u0005"+
-		"\u0000\u0000\u0001\u0010\u0001\u0001\u0000\u0000\u0000\u0011\u0015\u0003"+
-		"\u0004\u0002\u0000\u0012\u0015\u0003\u0006\u0003\u0000\u0013\u0015\u0003"+
-		"\b\u0004\u0000\u0014\u0011\u0001\u0000\u0000\u0000\u0014\u0012\u0001\u0000"+
-		"\u0000\u0000\u0014\u0013\u0001\u0000\u0000\u0000\u0015\u0003\u0001\u0000"+
-		"\u0000\u0000\u0016\u0017\u0007\u0000\u0000\u0000\u0017\u0005\u0001\u0000"+
-		"\u0000\u0000\u0018\u0019\u0005\u0005\u0000\u0000\u0019\u0007\u0001\u0000"+
-		"\u0000\u0000\u001a\u001e\u0005\u0001\u0000\u0000\u001b\u001d\u0007\u0001"+
-		"\u0000\u0000\u001c\u001b\u0001\u0000\u0000\u0000\u001d \u0001\u0000\u0000"+
-		"\u0000\u001e\u001c\u0001\u0000\u0000\u0000\u001e\u001f\u0001\u0000\u0000"+
-		"\u0000\u001f$\u0001\u0000\u0000\u0000 \u001e\u0001\u0000\u0000\u0000!"+
-		"#\u0003\u0002\u0001\u0000\"!\u0001\u0000\u0000\u0000#&\u0001\u0000\u0000"+
-		"\u0000$\"\u0001\u0000\u0000\u0000$%\u0001\u0000\u0000\u0000%\'\u0001\u0000"+
-		"\u0000\u0000&$\u0001\u0000\u0000\u0000\'(\u0005\u0002\u0000\u0000(\t\u0001"+
-		"\u0000\u0000\u0000\u0004\r\u0014\u001e$";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\f,\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\6\2\16\n\2\r\2\16\2\17\3\2\3\2\3\3\3\3"+
+		"\3\3\5\3\27\n\3\3\4\3\4\3\5\3\5\3\6\3\6\7\6\37\n\6\f\6\16\6\"\13\6\3\6"+
+		"\7\6%\n\6\f\6\16\6(\13\6\3\6\3\6\3\6\2\2\7\2\4\6\b\n\2\4\5\2\5\6\b\b\n"+
+		"\n\4\2\7\7\t\t\2+\2\r\3\2\2\2\4\26\3\2\2\2\6\30\3\2\2\2\b\32\3\2\2\2\n"+
+		"\34\3\2\2\2\f\16\5\4\3\2\r\f\3\2\2\2\16\17\3\2\2\2\17\r\3\2\2\2\17\20"+
+		"\3\2\2\2\20\21\3\2\2\2\21\22\7\2\2\3\22\3\3\2\2\2\23\27\5\6\4\2\24\27"+
+		"\5\b\5\2\25\27\5\n\6\2\26\23\3\2\2\2\26\24\3\2\2\2\26\25\3\2\2\2\27\5"+
+		"\3\2\2\2\30\31\t\2\2\2\31\7\3\2\2\2\32\33\7\7\2\2\33\t\3\2\2\2\34 \7\3"+
+		"\2\2\35\37\t\3\2\2\36\35\3\2\2\2\37\"\3\2\2\2 \36\3\2\2\2 !\3\2\2\2!&"+
+		"\3\2\2\2\" \3\2\2\2#%\5\4\3\2$#\3\2\2\2%(\3\2\2\2&$\3\2\2\2&\'\3\2\2\2"+
+		"\')\3\2\2\2(&\3\2\2\2)*\7\4\2\2*\13\3\2\2\2\6\17\26 &";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

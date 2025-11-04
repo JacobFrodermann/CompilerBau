@@ -1,4 +1,4 @@
-// Generated from c:/Users/xenia/Documents/GitHub/dbshit2/CompilerbauAB3/src/main/antlr/MiniC.g4 by ANTLR 4.13.1
+// Generated from /home/jef/git/CompilerBau/Arbeitsblatt3/src/main/antlr/MiniC.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class MiniCParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -98,7 +98,6 @@ public class MiniCParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ProgramContext extends ParserRuleContext {
 		public TerminalNode EOF() { return getToken(MiniCParser.EOF, 0); }
 		public List<StmtContext> stmt() {
@@ -123,7 +122,7 @@ public class MiniCParser extends Parser {
 			setState(31);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 66062024L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__5) | (1L << T__6) | (1L << T__8) | (1L << T__9) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << ID) | (1L << NUMBER) | (1L << STRING))) != 0)) {
 				{
 				{
 				setState(28);
@@ -149,7 +148,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class StmtContext extends ParserRuleContext {
 		public VardeclContext vardecl() {
 			return getRuleContext(VardeclContext.class,0);
@@ -166,13 +164,13 @@ public class MiniCParser extends Parser {
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
-		public WhileContext while_() {
+		public WhileContext while() {
 			return getRuleContext(WhileContext.class,0);
 		}
 		public CondContext cond() {
 			return getRuleContext(CondContext.class,0);
 		}
-		public ReturnContext return_() {
+		public ReturnContext return() {
 			return getRuleContext(ReturnContext.class,0);
 		}
 		public StmtContext(ParserRuleContext parent, int invokingState) {
@@ -229,7 +227,7 @@ public class MiniCParser extends Parser {
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(43);
-				while_();
+				while();
 				}
 				break;
 			case 7:
@@ -243,7 +241,7 @@ public class MiniCParser extends Parser {
 				enterOuterAlt(_localctx, 8);
 				{
 				setState(45);
-				return_();
+				return();
 				}
 				break;
 			}
@@ -259,7 +257,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class VardeclContext extends ParserRuleContext {
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
@@ -312,7 +309,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class AssignContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(MiniCParser.ID, 0); }
 		public ExprContext expr() {
@@ -351,7 +347,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class FndeclContext extends ParserRuleContext {
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
@@ -385,7 +380,7 @@ public class MiniCParser extends Parser {
 			setState(65);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 7340032L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__19) | (1L << T__20) | (1L << T__21))) != 0)) {
 				{
 				setState(64);
 				params();
@@ -409,7 +404,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ParamsContext extends ParserRuleContext {
 		public List<TypeContext> type() {
 			return getRuleContexts(TypeContext.class);
@@ -469,7 +463,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ReturnContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -480,7 +473,7 @@ public class MiniCParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_return; }
 	}
 
-	public final ReturnContext return_() throws RecognitionException {
+	public final ReturnContext return() throws RecognitionException {
 		ReturnContext _localctx = new ReturnContext(_ctx, getState());
 		enterRule(_localctx, 12, RULE_return);
 		try {
@@ -505,7 +498,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class FncallContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(MiniCParser.ID, 0); }
 		public ArgsContext args() {
@@ -531,7 +523,7 @@ public class MiniCParser extends Parser {
 			setState(88);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 58720264L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << ID) | (1L << NUMBER) | (1L << STRING))) != 0)) {
 				{
 				setState(87);
 				args();
@@ -553,7 +545,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ArgsContext extends ParserRuleContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -605,7 +596,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class BlockContext extends ParserRuleContext {
 		public List<StmtContext> stmt() {
 			return getRuleContexts(StmtContext.class);
@@ -631,7 +621,7 @@ public class MiniCParser extends Parser {
 			setState(104);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 66062024L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__5) | (1L << T__6) | (1L << T__8) | (1L << T__9) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << ID) | (1L << NUMBER) | (1L << STRING))) != 0)) {
 				{
 				{
 				setState(101);
@@ -657,7 +647,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class WhileContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -671,7 +660,7 @@ public class MiniCParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_while; }
 	}
 
-	public final WhileContext while_() throws RecognitionException {
+	public final WhileContext while() throws RecognitionException {
 		WhileContext _localctx = new WhileContext(_ctx, getState());
 		enterRule(_localctx, 20, RULE_while);
 		try {
@@ -700,7 +689,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class CondContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -759,7 +747,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ExprContext extends ParserRuleContext {
 		public FncallContext fncall() {
 			return getRuleContext(FncallContext.class,0);
@@ -960,7 +947,6 @@ public class MiniCParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class TypeContext extends ParserRuleContext {
 		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -977,7 +963,7 @@ public class MiniCParser extends Parser {
 			{
 			setState(164);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 7340032L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__19) | (1L << T__20) | (1L << T__21))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -1028,104 +1014,56 @@ public class MiniCParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u001b\u00a7\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001"+
-		"\u0002\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004"+
-		"\u0002\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007"+
-		"\u0002\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b"+
-		"\u0002\f\u0007\f\u0002\r\u0007\r\u0001\u0000\u0005\u0000\u001e\b\u0000"+
-		"\n\u0000\f\u0000!\t\u0000\u0001\u0000\u0001\u0000\u0001\u0001\u0001\u0001"+
-		"\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001"+
-		"\u0001\u0001\u0001\u0001\u0003\u0001/\b\u0001\u0001\u0002\u0001\u0002"+
-		"\u0001\u0002\u0001\u0002\u0003\u00025\b\u0002\u0001\u0002\u0001\u0002"+
-		"\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0004"+
-		"\u0001\u0004\u0001\u0004\u0001\u0004\u0003\u0004B\b\u0004\u0001\u0004"+
-		"\u0001\u0004\u0001\u0004\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u0005"+
-		"\u0001\u0005\u0001\u0005\u0005\u0005M\b\u0005\n\u0005\f\u0005P\t\u0005"+
-		"\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0006\u0001\u0007\u0001\u0007"+
-		"\u0001\u0007\u0003\u0007Y\b\u0007\u0001\u0007\u0001\u0007\u0001\b\u0001"+
-		"\b\u0001\b\u0005\b`\b\b\n\b\f\bc\t\b\u0001\t\u0001\t\u0005\tg\b\t\n\t"+
-		"\f\tj\t\t\u0001\t\u0001\t\u0001\n\u0001\n\u0001\n\u0001\n\u0001\n\u0001"+
-		"\n\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b\u0001\u000b"+
-		"\u0001\u000b\u0003\u000b{\b\u000b\u0001\f\u0001\f\u0001\f\u0001\f\u0001"+
-		"\f\u0001\f\u0001\f\u0001\f\u0001\f\u0003\f\u0086\b\f\u0001\f\u0001\f\u0001"+
-		"\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001"+
-		"\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001\f\u0001"+
-		"\f\u0001\f\u0001\f\u0001\f\u0005\f\u00a0\b\f\n\f\f\f\u00a3\t\f\u0001\r"+
-		"\u0001\r\u0001\r\u0000\u0001\u0018\u000e\u0000\u0002\u0004\u0006\b\n\f"+
-		"\u000e\u0010\u0012\u0014\u0016\u0018\u001a\u0000\u0001\u0001\u0000\u0014"+
-		"\u0016\u00b3\u0000\u001f\u0001\u0000\u0000\u0000\u0002.\u0001\u0000\u0000"+
-		"\u0000\u00040\u0001\u0000\u0000\u0000\u00068\u0001\u0000\u0000\u0000\b"+
-		"=\u0001\u0000\u0000\u0000\nF\u0001\u0000\u0000\u0000\fQ\u0001\u0000\u0000"+
-		"\u0000\u000eU\u0001\u0000\u0000\u0000\u0010\\\u0001\u0000\u0000\u0000"+
-		"\u0012d\u0001\u0000\u0000\u0000\u0014m\u0001\u0000\u0000\u0000\u0016s"+
-		"\u0001\u0000\u0000\u0000\u0018\u0085\u0001\u0000\u0000\u0000\u001a\u00a4"+
-		"\u0001\u0000\u0000\u0000\u001c\u001e\u0003\u0002\u0001\u0000\u001d\u001c"+
-		"\u0001\u0000\u0000\u0000\u001e!\u0001\u0000\u0000\u0000\u001f\u001d\u0001"+
-		"\u0000\u0000\u0000\u001f \u0001\u0000\u0000\u0000 \"\u0001\u0000\u0000"+
-		"\u0000!\u001f\u0001\u0000\u0000\u0000\"#\u0005\u0000\u0000\u0001#\u0001"+
-		"\u0001\u0000\u0000\u0000$/\u0003\u0004\u0002\u0000%/\u0003\u0006\u0003"+
-		"\u0000&/\u0003\b\u0004\u0000\'(\u0003\u0018\f\u0000()\u0005\u0001\u0000"+
-		"\u0000)/\u0001\u0000\u0000\u0000*/\u0003\u0012\t\u0000+/\u0003\u0014\n"+
-		"\u0000,/\u0003\u0016\u000b\u0000-/\u0003\f\u0006\u0000.$\u0001\u0000\u0000"+
-		"\u0000.%\u0001\u0000\u0000\u0000.&\u0001\u0000\u0000\u0000.\'\u0001\u0000"+
-		"\u0000\u0000.*\u0001\u0000\u0000\u0000.+\u0001\u0000\u0000\u0000.,\u0001"+
-		"\u0000\u0000\u0000.-\u0001\u0000\u0000\u0000/\u0003\u0001\u0000\u0000"+
-		"\u000001\u0003\u001a\r\u000014\u0005\u0017\u0000\u000023\u0005\u0002\u0000"+
-		"\u000035\u0003\u0018\f\u000042\u0001\u0000\u0000\u000045\u0001\u0000\u0000"+
-		"\u000056\u0001\u0000\u0000\u000067\u0005\u0001\u0000\u00007\u0005\u0001"+
-		"\u0000\u0000\u000089\u0005\u0017\u0000\u00009:\u0005\u0002\u0000\u0000"+
-		":;\u0003\u0018\f\u0000;<\u0005\u0001\u0000\u0000<\u0007\u0001\u0000\u0000"+
-		"\u0000=>\u0003\u001a\r\u0000>?\u0005\u0017\u0000\u0000?A\u0005\u0003\u0000"+
-		"\u0000@B\u0003\n\u0005\u0000A@\u0001\u0000\u0000\u0000AB\u0001\u0000\u0000"+
-		"\u0000BC\u0001\u0000\u0000\u0000CD\u0005\u0004\u0000\u0000DE\u0003\u0012"+
-		"\t\u0000E\t\u0001\u0000\u0000\u0000FG\u0003\u001a\r\u0000GN\u0005\u0017"+
-		"\u0000\u0000HI\u0005\u0005\u0000\u0000IJ\u0003\u001a\r\u0000JK\u0005\u0017"+
-		"\u0000\u0000KM\u0001\u0000\u0000\u0000LH\u0001\u0000\u0000\u0000MP\u0001"+
-		"\u0000\u0000\u0000NL\u0001\u0000\u0000\u0000NO\u0001\u0000\u0000\u0000"+
-		"O\u000b\u0001\u0000\u0000\u0000PN\u0001\u0000\u0000\u0000QR\u0005\u0006"+
-		"\u0000\u0000RS\u0003\u0018\f\u0000ST\u0005\u0001\u0000\u0000T\r\u0001"+
-		"\u0000\u0000\u0000UV\u0005\u0017\u0000\u0000VX\u0005\u0003\u0000\u0000"+
-		"WY\u0003\u0010\b\u0000XW\u0001\u0000\u0000\u0000XY\u0001\u0000\u0000\u0000"+
-		"YZ\u0001\u0000\u0000\u0000Z[\u0005\u0004\u0000\u0000[\u000f\u0001\u0000"+
-		"\u0000\u0000\\a\u0003\u0018\f\u0000]^\u0005\u0005\u0000\u0000^`\u0003"+
-		"\u0018\f\u0000_]\u0001\u0000\u0000\u0000`c\u0001\u0000\u0000\u0000a_\u0001"+
-		"\u0000\u0000\u0000ab\u0001\u0000\u0000\u0000b\u0011\u0001\u0000\u0000"+
-		"\u0000ca\u0001\u0000\u0000\u0000dh\u0005\u0007\u0000\u0000eg\u0003\u0002"+
-		"\u0001\u0000fe\u0001\u0000\u0000\u0000gj\u0001\u0000\u0000\u0000hf\u0001"+
-		"\u0000\u0000\u0000hi\u0001\u0000\u0000\u0000ik\u0001\u0000\u0000\u0000"+
-		"jh\u0001\u0000\u0000\u0000kl\u0005\b\u0000\u0000l\u0013\u0001\u0000\u0000"+
-		"\u0000mn\u0005\t\u0000\u0000no\u0005\u0003\u0000\u0000op\u0003\u0018\f"+
-		"\u0000pq\u0005\u0004\u0000\u0000qr\u0003\u0012\t\u0000r\u0015\u0001\u0000"+
-		"\u0000\u0000st\u0005\n\u0000\u0000tu\u0005\u0003\u0000\u0000uv\u0003\u0018"+
-		"\f\u0000vw\u0005\u0004\u0000\u0000wz\u0003\u0012\t\u0000xy\u0005\u000b"+
-		"\u0000\u0000y{\u0003\u0012\t\u0000zx\u0001\u0000\u0000\u0000z{\u0001\u0000"+
-		"\u0000\u0000{\u0017\u0001\u0000\u0000\u0000|}\u0006\f\uffff\uffff\u0000"+
-		"}\u0086\u0003\u000e\u0007\u0000~\u0086\u0005\u0017\u0000\u0000\u007f\u0086"+
-		"\u0005\u0018\u0000\u0000\u0080\u0086\u0005\u0019\u0000\u0000\u0081\u0082"+
-		"\u0005\u0003\u0000\u0000\u0082\u0083\u0003\u0018\f\u0000\u0083\u0084\u0005"+
-		"\u0004\u0000\u0000\u0084\u0086\u0001\u0000\u0000\u0000\u0085|\u0001\u0000"+
-		"\u0000\u0000\u0085~\u0001\u0000\u0000\u0000\u0085\u007f\u0001\u0000\u0000"+
-		"\u0000\u0085\u0080\u0001\u0000\u0000\u0000\u0085\u0081\u0001\u0000\u0000"+
-		"\u0000\u0086\u00a1\u0001\u0000\u0000\u0000\u0087\u0088\n\f\u0000\u0000"+
-		"\u0088\u0089\u0005\f\u0000\u0000\u0089\u00a0\u0003\u0018\f\r\u008a\u008b"+
-		"\n\u000b\u0000\u0000\u008b\u008c\u0005\r\u0000\u0000\u008c\u00a0\u0003"+
-		"\u0018\f\f\u008d\u008e\n\n\u0000\u0000\u008e\u008f\u0005\u000e\u0000\u0000"+
-		"\u008f\u00a0\u0003\u0018\f\u000b\u0090\u0091\n\t\u0000\u0000\u0091\u0092"+
-		"\u0005\u000f\u0000\u0000\u0092\u00a0\u0003\u0018\f\n\u0093\u0094\n\b\u0000"+
-		"\u0000\u0094\u0095\u0005\u0010\u0000\u0000\u0095\u00a0\u0003\u0018\f\t"+
-		"\u0096\u0097\n\u0007\u0000\u0000\u0097\u0098\u0005\u0011\u0000\u0000\u0098"+
-		"\u00a0\u0003\u0018\f\b\u0099\u009a\n\u0006\u0000\u0000\u009a\u009b\u0005"+
-		"\u0012\u0000\u0000\u009b\u00a0\u0003\u0018\f\u0007\u009c\u009d\n\u0005"+
-		"\u0000\u0000\u009d\u009e\u0005\u0013\u0000\u0000\u009e\u00a0\u0003\u0018"+
-		"\f\u0006\u009f\u0087\u0001\u0000\u0000\u0000\u009f\u008a\u0001\u0000\u0000"+
-		"\u0000\u009f\u008d\u0001\u0000\u0000\u0000\u009f\u0090\u0001\u0000\u0000"+
-		"\u0000\u009f\u0093\u0001\u0000\u0000\u0000\u009f\u0096\u0001\u0000\u0000"+
-		"\u0000\u009f\u0099\u0001\u0000\u0000\u0000\u009f\u009c\u0001\u0000\u0000"+
-		"\u0000\u00a0\u00a3\u0001\u0000\u0000\u0000\u00a1\u009f\u0001\u0000\u0000"+
-		"\u0000\u00a1\u00a2\u0001\u0000\u0000\u0000\u00a2\u0019\u0001\u0000\u0000"+
-		"\u0000\u00a3\u00a1\u0001\u0000\u0000\u0000\u00a4\u00a5\u0007\u0000\u0000"+
-		"\u0000\u00a5\u001b\u0001\u0000\u0000\u0000\f\u001f.4ANXahz\u0085\u009f"+
-		"\u00a1";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\35\u00a9\4\2\t\2"+
+		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
+		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\3\2\7\2 \n\2\f\2\16\2#\13\2"+
+		"\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3\61\n\3\3\4\3\4\3"+
+		"\4\3\4\5\4\67\n\4\3\4\3\4\3\5\3\5\3\5\3\5\3\5\3\6\3\6\3\6\3\6\5\6D\n\6"+
+		"\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\7\7O\n\7\f\7\16\7R\13\7\3\b\3\b\3"+
+		"\b\3\b\3\t\3\t\3\t\5\t[\n\t\3\t\3\t\3\n\3\n\3\n\7\nb\n\n\f\n\16\ne\13"+
+		"\n\3\13\3\13\7\13i\n\13\f\13\16\13l\13\13\3\13\3\13\3\f\3\f\3\f\3\f\3"+
+		"\f\3\f\3\r\3\r\3\r\3\r\3\r\3\r\3\r\5\r}\n\r\3\16\3\16\3\16\3\16\3\16\3"+
+		"\16\3\16\3\16\3\16\5\16\u0088\n\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16"+
+		"\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16"+
+		"\3\16\3\16\3\16\7\16\u00a2\n\16\f\16\16\16\u00a5\13\16\3\17\3\17\3\17"+
+		"\2\3\32\20\2\4\6\b\n\f\16\20\22\24\26\30\32\34\2\3\3\2\26\30\2\u00b5\2"+
+		"!\3\2\2\2\4\60\3\2\2\2\6\62\3\2\2\2\b:\3\2\2\2\n?\3\2\2\2\fH\3\2\2\2\16"+
+		"S\3\2\2\2\20W\3\2\2\2\22^\3\2\2\2\24f\3\2\2\2\26o\3\2\2\2\30u\3\2\2\2"+
+		"\32\u0087\3\2\2\2\34\u00a6\3\2\2\2\36 \5\4\3\2\37\36\3\2\2\2 #\3\2\2\2"+
+		"!\37\3\2\2\2!\"\3\2\2\2\"$\3\2\2\2#!\3\2\2\2$%\7\2\2\3%\3\3\2\2\2&\61"+
+		"\5\6\4\2\'\61\5\b\5\2(\61\5\n\6\2)*\5\32\16\2*+\7\3\2\2+\61\3\2\2\2,\61"+
+		"\5\24\13\2-\61\5\26\f\2.\61\5\30\r\2/\61\5\16\b\2\60&\3\2\2\2\60\'\3\2"+
+		"\2\2\60(\3\2\2\2\60)\3\2\2\2\60,\3\2\2\2\60-\3\2\2\2\60.\3\2\2\2\60/\3"+
+		"\2\2\2\61\5\3\2\2\2\62\63\5\34\17\2\63\66\7\31\2\2\64\65\7\4\2\2\65\67"+
+		"\5\32\16\2\66\64\3\2\2\2\66\67\3\2\2\2\678\3\2\2\289\7\3\2\29\7\3\2\2"+
+		"\2:;\7\31\2\2;<\7\4\2\2<=\5\32\16\2=>\7\3\2\2>\t\3\2\2\2?@\5\34\17\2@"+
+		"A\7\31\2\2AC\7\5\2\2BD\5\f\7\2CB\3\2\2\2CD\3\2\2\2DE\3\2\2\2EF\7\6\2\2"+
+		"FG\5\24\13\2G\13\3\2\2\2HI\5\34\17\2IP\7\31\2\2JK\7\7\2\2KL\5\34\17\2"+
+		"LM\7\31\2\2MO\3\2\2\2NJ\3\2\2\2OR\3\2\2\2PN\3\2\2\2PQ\3\2\2\2Q\r\3\2\2"+
+		"\2RP\3\2\2\2ST\7\b\2\2TU\5\32\16\2UV\7\3\2\2V\17\3\2\2\2WX\7\31\2\2XZ"+
+		"\7\5\2\2Y[\5\22\n\2ZY\3\2\2\2Z[\3\2\2\2[\\\3\2\2\2\\]\7\6\2\2]\21\3\2"+
+		"\2\2^c\5\32\16\2_`\7\7\2\2`b\5\32\16\2a_\3\2\2\2be\3\2\2\2ca\3\2\2\2c"+
+		"d\3\2\2\2d\23\3\2\2\2ec\3\2\2\2fj\7\t\2\2gi\5\4\3\2hg\3\2\2\2il\3\2\2"+
+		"\2jh\3\2\2\2jk\3\2\2\2km\3\2\2\2lj\3\2\2\2mn\7\n\2\2n\25\3\2\2\2op\7\13"+
+		"\2\2pq\7\5\2\2qr\5\32\16\2rs\7\6\2\2st\5\24\13\2t\27\3\2\2\2uv\7\f\2\2"+
+		"vw\7\5\2\2wx\5\32\16\2xy\7\6\2\2y|\5\24\13\2z{\7\r\2\2{}\5\24\13\2|z\3"+
+		"\2\2\2|}\3\2\2\2}\31\3\2\2\2~\177\b\16\1\2\177\u0088\5\20\t\2\u0080\u0088"+
+		"\7\31\2\2\u0081\u0088\7\32\2\2\u0082\u0088\7\33\2\2\u0083\u0084\7\5\2"+
+		"\2\u0084\u0085\5\32\16\2\u0085\u0086\7\6\2\2\u0086\u0088\3\2\2\2\u0087"+
+		"~\3\2\2\2\u0087\u0080\3\2\2\2\u0087\u0081\3\2\2\2\u0087\u0082\3\2\2\2"+
+		"\u0087\u0083\3\2\2\2\u0088\u00a3\3\2\2\2\u0089\u008a\f\16\2\2\u008a\u008b"+
+		"\7\16\2\2\u008b\u00a2\5\32\16\17\u008c\u008d\f\r\2\2\u008d\u008e\7\17"+
+		"\2\2\u008e\u00a2\5\32\16\16\u008f\u0090\f\f\2\2\u0090\u0091\7\20\2\2\u0091"+
+		"\u00a2\5\32\16\r\u0092\u0093\f\13\2\2\u0093\u0094\7\21\2\2\u0094\u00a2"+
+		"\5\32\16\f\u0095\u0096\f\n\2\2\u0096\u0097\7\22\2\2\u0097\u00a2\5\32\16"+
+		"\13\u0098\u0099\f\t\2\2\u0099\u009a\7\23\2\2\u009a\u00a2\5\32\16\n\u009b"+
+		"\u009c\f\b\2\2\u009c\u009d\7\24\2\2\u009d\u00a2\5\32\16\t\u009e\u009f"+
+		"\f\7\2\2\u009f\u00a0\7\25\2\2\u00a0\u00a2\5\32\16\b\u00a1\u0089\3\2\2"+
+		"\2\u00a1\u008c\3\2\2\2\u00a1\u008f\3\2\2\2\u00a1\u0092\3\2\2\2\u00a1\u0095"+
+		"\3\2\2\2\u00a1\u0098\3\2\2\2\u00a1\u009b\3\2\2\2\u00a1\u009e\3\2\2\2\u00a2"+
+		"\u00a5\3\2\2\2\u00a3\u00a1\3\2\2\2\u00a3\u00a4\3\2\2\2\u00a4\33\3\2\2"+
+		"\2\u00a5\u00a3\3\2\2\2\u00a6\u00a7\t\2\2\2\u00a7\35\3\2\2\2\16!\60\66"+
+		"CPZcj|\u0087\u00a1\u00a3";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

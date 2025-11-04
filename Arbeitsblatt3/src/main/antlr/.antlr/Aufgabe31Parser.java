@@ -1,4 +1,4 @@
-// Generated from c:/Users/xenia/Documents/GitHub/dbshit2/CompilerbauAB3/src/main/antlr/Aufgabe31.g4 by ANTLR 4.13.1
+// Generated from /home/jef/git/CompilerBau/Arbeitsblatt3/src/main/antlr/Aufgabe31.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class Aufgabe31Parser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -20,12 +20,12 @@ public class Aufgabe31Parser extends Parser {
 		NUMBER=10, STRING=11, GREATERTHAN=12, LESSTHAN=13, PLUS=14, MINUS=15, 
 		DIV=16, MUL=17, EQUAL=18, NEQUAL=19, COMMENT=20, WS=21, NEWLINE=22;
 	public static final int
-		RULE_program = 0, RULE_while = 1, RULE_condition = 2, RULE_vardec = 3, 
+		RULE_program = 0, RULE_loop = 1, RULE_condition = 2, RULE_vardec = 3, 
 		RULE_assign = 4, RULE_expr = 5, RULE_comparison = 6, RULE_addition = 7, 
 		RULE_multiplication = 8, RULE_idOrNum = 9, RULE_statement = 10;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"program", "while", "condition", "vardec", "assign", "expr", "comparison", 
+			"program", "loop", "condition", "vardec", "assign", "expr", "comparison", 
 			"addition", "multiplication", "idOrNum", "statement"
 		};
 	}
@@ -97,7 +97,6 @@ public class Aufgabe31Parser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ProgramContext extends ParserRuleContext {
 		public TerminalNode EOF() { return getToken(Aufgabe31Parser.EOF, 0); }
 		public List<StatementContext> statement() {
@@ -122,7 +121,7 @@ public class Aufgabe31Parser extends Parser {
 			setState(25);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3402L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__5) | (1L << ID) | (1L << NUMBER) | (1L << STRING))) != 0)) {
 				{
 				{
 				setState(22);
@@ -148,8 +147,7 @@ public class Aufgabe31Parser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
-	public static class WhileContext extends ParserRuleContext {
+	public static class LoopContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -159,15 +157,15 @@ public class Aufgabe31Parser extends Parser {
 		public StatementContext statement(int i) {
 			return getRuleContext(StatementContext.class,i);
 		}
-		public WhileContext(ParserRuleContext parent, int invokingState) {
+		public LoopContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_while; }
+		@Override public int getRuleIndex() { return RULE_loop; }
 	}
 
-	public final WhileContext while_() throws RecognitionException {
-		WhileContext _localctx = new WhileContext(_ctx, getState());
-		enterRule(_localctx, 2, RULE_while);
+	public final LoopContext loop() throws RecognitionException {
+		LoopContext _localctx = new LoopContext(_ctx, getState());
+		enterRule(_localctx, 2, RULE_loop);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
@@ -211,7 +209,6 @@ public class Aufgabe31Parser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ConditionContext extends ParserRuleContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
@@ -254,7 +251,7 @@ public class Aufgabe31Parser extends Parser {
 				setState(44); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 3402L) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__5) | (1L << ID) | (1L << NUMBER) | (1L << STRING))) != 0) );
 			setState(52);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -275,7 +272,7 @@ public class Aufgabe31Parser extends Parser {
 					setState(50); 
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 3402L) != 0) );
+				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__5) | (1L << ID) | (1L << NUMBER) | (1L << STRING))) != 0) );
 				}
 			}
 
@@ -294,7 +291,6 @@ public class Aufgabe31Parser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class VardecContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(Aufgabe31Parser.ID, 0); }
 		public TerminalNode ASSIGN() { return getToken(Aufgabe31Parser.ASSIGN, 0); }
@@ -341,7 +337,6 @@ public class Aufgabe31Parser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class AssignContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(Aufgabe31Parser.ID, 0); }
 		public TerminalNode ASSIGN() { return getToken(Aufgabe31Parser.ASSIGN, 0); }
@@ -379,7 +374,6 @@ public class Aufgabe31Parser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ExprContext extends ParserRuleContext {
 		public ComparisonContext comparison() {
 			return getRuleContext(ComparisonContext.class,0);
@@ -429,7 +423,6 @@ public class Aufgabe31Parser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ComparisonContext extends ParserRuleContext {
 		public List<AdditionContext> addition() {
 			return getRuleContexts(AdditionContext.class);
@@ -471,12 +464,12 @@ public class Aufgabe31Parser extends Parser {
 			setState(74);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 798720L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << GREATERTHAN) | (1L << LESSTHAN) | (1L << EQUAL) | (1L << NEQUAL))) != 0)) {
 				{
 				{
 				setState(70);
 				_la = _input.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 798720L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << GREATERTHAN) | (1L << LESSTHAN) | (1L << EQUAL) | (1L << NEQUAL))) != 0)) ) {
 				_errHandler.recoverInline(this);
 				}
 				else {
@@ -505,7 +498,6 @@ public class Aufgabe31Parser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class AdditionContext extends ParserRuleContext {
 		public List<MultiplicationContext> multiplication() {
 			return getRuleContexts(MultiplicationContext.class);
@@ -573,7 +565,6 @@ public class Aufgabe31Parser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class MultiplicationContext extends ParserRuleContext {
 		public List<IdOrNumContext> idOrNum() {
 			return getRuleContexts(IdOrNumContext.class);
@@ -641,7 +632,6 @@ public class Aufgabe31Parser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class IdOrNumContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(Aufgabe31Parser.ID, 0); }
 		public TerminalNode NUMBER() { return getToken(Aufgabe31Parser.NUMBER, 0); }
@@ -701,7 +691,6 @@ public class Aufgabe31Parser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class StatementContext extends ParserRuleContext {
 		public VardecContext vardec() {
 			return getRuleContext(VardecContext.class,0);
@@ -712,8 +701,8 @@ public class Aufgabe31Parser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public WhileContext while_() {
-			return getRuleContext(WhileContext.class,0);
+		public LoopContext loop() {
+			return getRuleContext(LoopContext.class,0);
 		}
 		public ConditionContext condition() {
 			return getRuleContext(ConditionContext.class,0);
@@ -756,7 +745,7 @@ public class Aufgabe31Parser extends Parser {
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(104);
-				while_();
+				loop();
 				}
 				break;
 			case 5:
@@ -780,68 +769,34 @@ public class Aufgabe31Parser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u0016m\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
-		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
-		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
-		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0001\u0000\u0005\u0000\u0018"+
-		"\b\u0000\n\u0000\f\u0000\u001b\t\u0000\u0001\u0000\u0001\u0000\u0001\u0001"+
-		"\u0001\u0001\u0001\u0001\u0001\u0001\u0004\u0001#\b\u0001\u000b\u0001"+
-		"\f\u0001$\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0004\u0002"+
-		"+\b\u0002\u000b\u0002\f\u0002,\u0001\u0002\u0001\u0002\u0004\u00021\b"+
-		"\u0002\u000b\u0002\f\u00022\u0003\u00025\b\u0002\u0001\u0002\u0001\u0002"+
-		"\u0001\u0003\u0001\u0003\u0001\u0003\u0003\u0003<\b\u0003\u0001\u0004"+
-		"\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0005\u0001\u0005\u0003\u0005"+
-		"D\b\u0005\u0001\u0006\u0001\u0006\u0001\u0006\u0005\u0006I\b\u0006\n\u0006"+
-		"\f\u0006L\t\u0006\u0001\u0007\u0001\u0007\u0001\u0007\u0005\u0007Q\b\u0007"+
-		"\n\u0007\f\u0007T\t\u0007\u0001\b\u0001\b\u0001\b\u0005\bY\b\b\n\b\f\b"+
-		"\\\t\b\u0001\t\u0001\t\u0001\t\u0001\t\u0001\t\u0001\t\u0003\td\b\t\u0001"+
-		"\n\u0001\n\u0001\n\u0001\n\u0001\n\u0003\nk\b\n\u0001\n\u0000\u0000\u000b"+
-		"\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0000\u0003\u0002"+
-		"\u0000\f\r\u0012\u0013\u0001\u0000\u000e\u000f\u0001\u0000\u0010\u0011"+
-		"q\u0000\u0019\u0001\u0000\u0000\u0000\u0002\u001e\u0001\u0000\u0000\u0000"+
-		"\u0004&\u0001\u0000\u0000\u0000\u00068\u0001\u0000\u0000\u0000\b=\u0001"+
-		"\u0000\u0000\u0000\nC\u0001\u0000\u0000\u0000\fE\u0001\u0000\u0000\u0000"+
-		"\u000eM\u0001\u0000\u0000\u0000\u0010U\u0001\u0000\u0000\u0000\u0012c"+
-		"\u0001\u0000\u0000\u0000\u0014j\u0001\u0000\u0000\u0000\u0016\u0018\u0003"+
-		"\u0014\n\u0000\u0017\u0016\u0001\u0000\u0000\u0000\u0018\u001b\u0001\u0000"+
-		"\u0000\u0000\u0019\u0017\u0001\u0000\u0000\u0000\u0019\u001a\u0001\u0000"+
-		"\u0000\u0000\u001a\u001c\u0001\u0000\u0000\u0000\u001b\u0019\u0001\u0000"+
-		"\u0000\u0000\u001c\u001d\u0005\u0000\u0000\u0001\u001d\u0001\u0001\u0000"+
-		"\u0000\u0000\u001e\u001f\u0005\u0001\u0000\u0000\u001f \u0003\n\u0005"+
-		"\u0000 \"\u0005\u0002\u0000\u0000!#\u0003\u0014\n\u0000\"!\u0001\u0000"+
-		"\u0000\u0000#$\u0001\u0000\u0000\u0000$\"\u0001\u0000\u0000\u0000$%\u0001"+
-		"\u0000\u0000\u0000%\u0003\u0001\u0000\u0000\u0000&\'\u0005\u0003\u0000"+
-		"\u0000\'(\u0003\n\u0005\u0000(*\u0005\u0002\u0000\u0000)+\u0003\u0014"+
-		"\n\u0000*)\u0001\u0000\u0000\u0000+,\u0001\u0000\u0000\u0000,*\u0001\u0000"+
-		"\u0000\u0000,-\u0001\u0000\u0000\u0000-4\u0001\u0000\u0000\u0000.0\u0005"+
-		"\u0004\u0000\u0000/1\u0003\u0014\n\u00000/\u0001\u0000\u0000\u000012\u0001"+
-		"\u0000\u0000\u000020\u0001\u0000\u0000\u000023\u0001\u0000\u0000\u0000"+
-		"35\u0001\u0000\u0000\u00004.\u0001\u0000\u0000\u000045\u0001\u0000\u0000"+
-		"\u000056\u0001\u0000\u0000\u000067\u0005\u0005\u0000\u00007\u0005\u0001"+
-		"\u0000\u0000\u00008;\u0005\b\u0000\u00009:\u0005\t\u0000\u0000:<\u0003"+
-		"\n\u0005\u0000;9\u0001\u0000\u0000\u0000;<\u0001\u0000\u0000\u0000<\u0007"+
-		"\u0001\u0000\u0000\u0000=>\u0005\b\u0000\u0000>?\u0005\t\u0000\u0000?"+
-		"@\u0003\n\u0005\u0000@\t\u0001\u0000\u0000\u0000AD\u0003\f\u0006\u0000"+
-		"BD\u0005\u000b\u0000\u0000CA\u0001\u0000\u0000\u0000CB\u0001\u0000\u0000"+
-		"\u0000D\u000b\u0001\u0000\u0000\u0000EJ\u0003\u000e\u0007\u0000FG\u0007"+
-		"\u0000\u0000\u0000GI\u0003\u000e\u0007\u0000HF\u0001\u0000\u0000\u0000"+
-		"IL\u0001\u0000\u0000\u0000JH\u0001\u0000\u0000\u0000JK\u0001\u0000\u0000"+
-		"\u0000K\r\u0001\u0000\u0000\u0000LJ\u0001\u0000\u0000\u0000MR\u0003\u0010"+
-		"\b\u0000NO\u0007\u0001\u0000\u0000OQ\u0003\u0010\b\u0000PN\u0001\u0000"+
-		"\u0000\u0000QT\u0001\u0000\u0000\u0000RP\u0001\u0000\u0000\u0000RS\u0001"+
-		"\u0000\u0000\u0000S\u000f\u0001\u0000\u0000\u0000TR\u0001\u0000\u0000"+
-		"\u0000UZ\u0003\u0012\t\u0000VW\u0007\u0002\u0000\u0000WY\u0003\u0012\t"+
-		"\u0000XV\u0001\u0000\u0000\u0000Y\\\u0001\u0000\u0000\u0000ZX\u0001\u0000"+
-		"\u0000\u0000Z[\u0001\u0000\u0000\u0000[\u0011\u0001\u0000\u0000\u0000"+
-		"\\Z\u0001\u0000\u0000\u0000]d\u0005\b\u0000\u0000^d\u0005\n\u0000\u0000"+
-		"_`\u0005\u0006\u0000\u0000`a\u0003\n\u0005\u0000ab\u0005\u0007\u0000\u0000"+
-		"bd\u0001\u0000\u0000\u0000c]\u0001\u0000\u0000\u0000c^\u0001\u0000\u0000"+
-		"\u0000c_\u0001\u0000\u0000\u0000d\u0013\u0001\u0000\u0000\u0000ek\u0003"+
-		"\u0006\u0003\u0000fk\u0003\b\u0004\u0000gk\u0003\n\u0005\u0000hk\u0003"+
-		"\u0002\u0001\u0000ik\u0003\u0004\u0002\u0000je\u0001\u0000\u0000\u0000"+
-		"jf\u0001\u0000\u0000\u0000jg\u0001\u0000\u0000\u0000jh\u0001\u0000\u0000"+
-		"\u0000ji\u0001\u0000\u0000\u0000k\u0015\u0001\u0000\u0000\u0000\f\u0019"+
-		"$,24;CJRZcj";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\30o\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
+		"\f\t\f\3\2\7\2\32\n\2\f\2\16\2\35\13\2\3\2\3\2\3\3\3\3\3\3\3\3\6\3%\n"+
+		"\3\r\3\16\3&\3\4\3\4\3\4\3\4\6\4-\n\4\r\4\16\4.\3\4\3\4\6\4\63\n\4\r\4"+
+		"\16\4\64\5\4\67\n\4\3\4\3\4\3\5\3\5\3\5\5\5>\n\5\3\6\3\6\3\6\3\6\3\7\3"+
+		"\7\5\7F\n\7\3\b\3\b\3\b\7\bK\n\b\f\b\16\bN\13\b\3\t\3\t\3\t\7\tS\n\t\f"+
+		"\t\16\tV\13\t\3\n\3\n\3\n\7\n[\n\n\f\n\16\n^\13\n\3\13\3\13\3\13\3\13"+
+		"\3\13\3\13\5\13f\n\13\3\f\3\f\3\f\3\f\3\f\5\fm\n\f\3\f\2\2\r\2\4\6\b\n"+
+		"\f\16\20\22\24\26\2\5\4\2\16\17\24\25\3\2\20\21\3\2\22\23\2s\2\33\3\2"+
+		"\2\2\4 \3\2\2\2\6(\3\2\2\2\b:\3\2\2\2\n?\3\2\2\2\fE\3\2\2\2\16G\3\2\2"+
+		"\2\20O\3\2\2\2\22W\3\2\2\2\24e\3\2\2\2\26l\3\2\2\2\30\32\5\26\f\2\31\30"+
+		"\3\2\2\2\32\35\3\2\2\2\33\31\3\2\2\2\33\34\3\2\2\2\34\36\3\2\2\2\35\33"+
+		"\3\2\2\2\36\37\7\2\2\3\37\3\3\2\2\2 !\7\3\2\2!\"\5\f\7\2\"$\7\4\2\2#%"+
+		"\5\26\f\2$#\3\2\2\2%&\3\2\2\2&$\3\2\2\2&\'\3\2\2\2\'\5\3\2\2\2()\7\5\2"+
+		"\2)*\5\f\7\2*,\7\4\2\2+-\5\26\f\2,+\3\2\2\2-.\3\2\2\2.,\3\2\2\2./\3\2"+
+		"\2\2/\66\3\2\2\2\60\62\7\6\2\2\61\63\5\26\f\2\62\61\3\2\2\2\63\64\3\2"+
+		"\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65\67\3\2\2\2\66\60\3\2\2\2\66\67\3\2"+
+		"\2\2\678\3\2\2\289\7\7\2\29\7\3\2\2\2:=\7\n\2\2;<\7\13\2\2<>\5\f\7\2="+
+		";\3\2\2\2=>\3\2\2\2>\t\3\2\2\2?@\7\n\2\2@A\7\13\2\2AB\5\f\7\2B\13\3\2"+
+		"\2\2CF\5\16\b\2DF\7\r\2\2EC\3\2\2\2ED\3\2\2\2F\r\3\2\2\2GL\5\20\t\2HI"+
+		"\t\2\2\2IK\5\20\t\2JH\3\2\2\2KN\3\2\2\2LJ\3\2\2\2LM\3\2\2\2M\17\3\2\2"+
+		"\2NL\3\2\2\2OT\5\22\n\2PQ\t\3\2\2QS\5\22\n\2RP\3\2\2\2SV\3\2\2\2TR\3\2"+
+		"\2\2TU\3\2\2\2U\21\3\2\2\2VT\3\2\2\2W\\\5\24\13\2XY\t\4\2\2Y[\5\24\13"+
+		"\2ZX\3\2\2\2[^\3\2\2\2\\Z\3\2\2\2\\]\3\2\2\2]\23\3\2\2\2^\\\3\2\2\2_f"+
+		"\7\n\2\2`f\7\f\2\2ab\7\b\2\2bc\5\f\7\2cd\7\t\2\2df\3\2\2\2e_\3\2\2\2e"+
+		"`\3\2\2\2ea\3\2\2\2f\25\3\2\2\2gm\5\b\5\2hm\5\n\6\2im\5\f\7\2jm\5\4\3"+
+		"\2km\5\6\4\2lg\3\2\2\2lh\3\2\2\2li\3\2\2\2lj\3\2\2\2lk\3\2\2\2m\27\3\2"+
+		"\2\2\16\33&.\64\66=ELT\\el";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

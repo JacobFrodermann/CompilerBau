@@ -1,4 +1,4 @@
-// Generated from c:/Users/xenia/Documents/GitHub/dbshit2/CompilerbauAB3/src/main/antlr/my/pkg/HelloPackage.g4 by ANTLR 4.13.1
+// Generated from /home/jef/git/CompilerBau/Arbeitsblatt3/src/main/antlr/my/pkg/HelloPackage.g4 by ANTLR 4.9.2
 
 package my.pkg;
 
@@ -11,9 +11,9 @@ import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.*;
 
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class HelloPackageLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -105,36 +105,19 @@ public class HelloPackageLexer extends Lexer {
 	public ATN getATN() { return _ATN; }
 
 	public static final String _serializedATN =
-		"\u0004\u0000\u0007*\u0006\uffff\uffff\u0002\u0000\u0007\u0000\u0002\u0001"+
-		"\u0007\u0001\u0002\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004"+
-		"\u0007\u0004\u0002\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0001\u0000"+
-		"\u0001\u0000\u0001\u0001\u0001\u0001\u0001\u0002\u0001\u0002\u0001\u0003"+
-		"\u0001\u0003\u0001\u0004\u0001\u0004\u0005\u0004\u001a\b\u0004\n\u0004"+
-		"\f\u0004\u001d\t\u0004\u0001\u0005\u0004\u0005 \b\u0005\u000b\u0005\f"+
-		"\u0005!\u0001\u0006\u0004\u0006%\b\u0006\u000b\u0006\f\u0006&\u0001\u0006"+
-		"\u0001\u0006\u0000\u0000\u0007\u0001\u0001\u0003\u0002\u0005\u0003\u0007"+
-		"\u0004\t\u0005\u000b\u0006\r\u0007\u0001\u0000\u0004\u0001\u0000az\u0002"+
-		"\u0000AZaz\u0001\u000009\u0002\u0000\t\n  ,\u0000\u0001\u0001\u0000\u0000"+
-		"\u0000\u0000\u0003\u0001\u0000\u0000\u0000\u0000\u0005\u0001\u0000\u0000"+
-		"\u0000\u0000\u0007\u0001\u0000\u0000\u0000\u0000\t\u0001\u0000\u0000\u0000"+
-		"\u0000\u000b\u0001\u0000\u0000\u0000\u0000\r\u0001\u0000\u0000\u0000\u0001"+
-		"\u000f\u0001\u0000\u0000\u0000\u0003\u0011\u0001\u0000\u0000\u0000\u0005"+
-		"\u0013\u0001\u0000\u0000\u0000\u0007\u0015\u0001\u0000\u0000\u0000\t\u0017"+
-		"\u0001\u0000\u0000\u0000\u000b\u001f\u0001\u0000\u0000\u0000\r$\u0001"+
-		"\u0000\u0000\u0000\u000f\u0010\u0005=\u0000\u0000\u0010\u0002\u0001\u0000"+
-		"\u0000\u0000\u0011\u0012\u0005;\u0000\u0000\u0012\u0004\u0001\u0000\u0000"+
-		"\u0000\u0013\u0014\u0005+\u0000\u0000\u0014\u0006\u0001\u0000\u0000\u0000"+
-		"\u0015\u0016\u0005*\u0000\u0000\u0016\b\u0001\u0000\u0000\u0000\u0017"+
-		"\u001b\u0007\u0000\u0000\u0000\u0018\u001a\u0007\u0001\u0000\u0000\u0019"+
-		"\u0018\u0001\u0000\u0000\u0000\u001a\u001d\u0001\u0000\u0000\u0000\u001b"+
-		"\u0019\u0001\u0000\u0000\u0000\u001b\u001c\u0001\u0000\u0000\u0000\u001c"+
-		"\n\u0001\u0000\u0000\u0000\u001d\u001b\u0001\u0000\u0000\u0000\u001e "+
-		"\u0007\u0002\u0000\u0000\u001f\u001e\u0001\u0000\u0000\u0000 !\u0001\u0000"+
-		"\u0000\u0000!\u001f\u0001\u0000\u0000\u0000!\"\u0001\u0000\u0000\u0000"+
-		"\"\f\u0001\u0000\u0000\u0000#%\u0007\u0003\u0000\u0000$#\u0001\u0000\u0000"+
-		"\u0000%&\u0001\u0000\u0000\u0000&$\u0001\u0000\u0000\u0000&\'\u0001\u0000"+
-		"\u0000\u0000\'(\u0001\u0000\u0000\u0000()\u0006\u0006\u0000\u0000)\u000e"+
-		"\u0001\u0000\u0000\u0000\u0004\u0000\u001b!&\u0001\u0006\u0000\u0000";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2\t,\b\1\4\2\t\2\4"+
+		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\3\2\3\2\3\3\3\3\3\4\3\4"+
+		"\3\5\3\5\3\6\3\6\7\6\34\n\6\f\6\16\6\37\13\6\3\7\6\7\"\n\7\r\7\16\7#\3"+
+		"\b\6\b\'\n\b\r\b\16\b(\3\b\3\b\2\2\t\3\3\5\4\7\5\t\6\13\7\r\b\17\t\3\2"+
+		"\6\3\2c|\4\2C\\c|\3\2\62;\4\2\13\f\"\"\2.\2\3\3\2\2\2\2\5\3\2\2\2\2\7"+
+		"\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2\17\3\2\2\2\3\21\3\2\2"+
+		"\2\5\23\3\2\2\2\7\25\3\2\2\2\t\27\3\2\2\2\13\31\3\2\2\2\r!\3\2\2\2\17"+
+		"&\3\2\2\2\21\22\7?\2\2\22\4\3\2\2\2\23\24\7=\2\2\24\6\3\2\2\2\25\26\7"+
+		"-\2\2\26\b\3\2\2\2\27\30\7,\2\2\30\n\3\2\2\2\31\35\t\2\2\2\32\34\t\3\2"+
+		"\2\33\32\3\2\2\2\34\37\3\2\2\2\35\33\3\2\2\2\35\36\3\2\2\2\36\f\3\2\2"+
+		"\2\37\35\3\2\2\2 \"\t\4\2\2! \3\2\2\2\"#\3\2\2\2#!\3\2\2\2#$\3\2\2\2$"+
+		"\16\3\2\2\2%\'\t\5\2\2&%\3\2\2\2\'(\3\2\2\2(&\3\2\2\2()\3\2\2\2)*\3\2"+
+		"\2\2*+\b\b\2\2+\20\3\2\2\2\6\2\35#(\3\b\2\2";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

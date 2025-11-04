@@ -5,13 +5,13 @@ grammar Aufgabe31;
 program :  statement* EOF ;
 
 // while und if
-while   :  'while' expr 'do' statement+;
+loop   :  'while' expr 'do' statement+;
 condition : 'if' expr 'do' statement+ ('else do' statement+)? 'end' ;
 // Variablen (ohne typen wie in dem Beispiel)
 vardec  :  ID (ASSIGN expr)?;
 assign  :  ID ASSIGN expr;
 // comparison hat am wenigsten Vorrang, Multiplikation z.B. am meisten
-expr : comparison | STRING ; // String hier einzeln, damit man keine Strings multiplizieren kann 
+expr : comparison | STRING ; // String hier einzeln, damit man keine Strings multiplizieren kann
 comparison : addition ( (EQUAL | NEQUAL | LESSTHAN | GREATERTHAN) addition )* ;
 addition : multiplication ( (PLUS | MINUS) multiplication )* ;
 multiplication : idOrNum ( (MUL | DIV) idOrNum )* ; // Multiplikation mit IDs oder Zahlen, aber ohne Strings
@@ -24,7 +24,7 @@ idOrNum : ID
 statement:  vardec
     |  assign
     |  expr
-    |  while
+    |  loop
     |  condition
     ;
 
@@ -45,7 +45,7 @@ NEQUAL  : '!=';
 // Kommentare: Anfang Schraegstriche, danach alles was kein newline ist
 COMMENT : '//' ~[\r\n]* -> skip;
 WS      : [ \t]+ -> skip ;
-NEWLINE : [\r\n]+;
+NEWLINE : [\r\n]+ -> skip;
 
 /* Beispiel
 a := 0
