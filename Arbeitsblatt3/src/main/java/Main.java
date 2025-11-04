@@ -1,20 +1,10 @@
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
 
-import com.sun.source.tree.LiteralTree;
-import my.pkg.*;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.Tree;
 
 public class Main {
     static void main(String... args) throws IOException, URISyntaxException {
@@ -262,11 +252,11 @@ public class Main {
         }
     }
 
-    static class Assing extends Statement {
+    static class Assign extends Statement {
         String name;
         Expr value;
 
-        Assing(String n, Expr val) {
+        Assign(String n, Expr val) {
             name = n;
             value = val;
         }
@@ -295,7 +285,7 @@ public class Main {
     static class Conditional extends Statement {
         Comparison cond;
         List<Statement> ifBody, elseBody;
-        StringBuilder bodyBuilder, elseBuilder;
+        StringBuilder bodyBuilder = new StringBuilder(), elseBuilder = new StringBuilder();
 
         Conditional(Comparison comp, List<Statement> ifBody, List<Statement> elseBody) {
             this.cond = comp;
@@ -315,12 +305,12 @@ public class Main {
 
     }
 
-    static class whileLoop extends Statement {
+    static class WhileLoop extends Statement {
 
         Comparison cond;
         List<Statement> body;
 
-        whileLoop(Comparison cond, List<Statement> s) {
+        WhileLoop(Comparison cond, List<Statement> s) {
             this.cond = cond;
             body = s;
         }
@@ -337,6 +327,10 @@ public class Main {
 
     static class Prog {
         List<Statement> code;
+
+        Prog(List<Statement> code){
+            this.code = code;
+        }
 
         public String toString() {
             StringBuilder sb = new StringBuilder();
