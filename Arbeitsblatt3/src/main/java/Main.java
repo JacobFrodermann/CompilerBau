@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.CharStreams;
@@ -65,16 +66,12 @@ public class Main {
         @Override
         public String visitStatement(Aufgabe31Parser.StatementContext ctx) {
             String result = "";
-            if (ctx.vardec() != null) {
-                result = indent() + visit(ctx.vardec()) + "\n";
-            } else if (ctx.assign() != null) {
+            if (ctx.assign() != null) {
                 result = indent() + visit(ctx.assign()) + "\n";
-            } else if (ctx.expr() != null) {
-                result = indent() + visit(ctx.expr()) + "\n";
             } else if (ctx.loop() != null) {
                 result = visit(ctx.loop());
-            } else if (ctx.condition() != null) {
-                result = visit(ctx.condition());
+            } else if (ctx.conditional() != null) {
+                result = visit(ctx.conditional());
             }
             return result;
         }
@@ -95,9 +92,9 @@ public class Main {
         }
 
         @Override
-        public String visitCondition(Aufgabe31Parser.ConditionContext ctx) {
+        public String visitConditional(Aufgabe31Parser.ConditionalContext ctx) {
             StringBuilder sb = new StringBuilder();
-            sb.append(indent()).append("if ").append(visit(ctx.expr())).append(" do\n");
+            sb.append(indent()).append("if ").append(visit(ctx.comparison())).append(" do\n");
 
             indentLevel++;
             for (int i = 0; i < ctx.statement().size(); i++) {
@@ -126,18 +123,8 @@ public class Main {
         }
 
         @Override
-        public String visitVardec(Aufgabe31Parser.VardecContext ctx) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(ctx.ID().getText());
-            if (ctx.expr() != null) {
-                sb.append(" := ").append(visit(ctx.expr()));
-            }
-            return sb.toString();
-        }
-
-        @Override
         public String visitAssign(Aufgabe31Parser.AssignContext ctx) {
-            return ctx.ID().getText() + " := " + visit(ctx.expr());
+            return ctx.ID().getText() + " := " + visit(ctx.idOrNum() == null ? ctx.STRING() : ctx.idOrNum());
         }
 
         @Override
@@ -206,8 +193,6 @@ public class Main {
                 return ctx.ID().getText();
             } else if (ctx.NUMBER() != null) {
                 return ctx.NUMBER().getText();
-            } else if (ctx.expr() != null) {
-                return "(" + visit(ctx.expr()) + ")";
             }
             return "";
         }
@@ -325,7 +310,7 @@ public class Main {
         }
     }
 
-    static class Prog {
+    static class Prog extends Node {
         List<Statement> code;
 
         Prog(List<Statement> code){
@@ -343,6 +328,165 @@ public class Main {
 
     public static String indent(int i) {
         return "    ".repeat(i);
+    }
+
+    public static class AstVisitor extends Aufgabe31BaseVisitor<Node> {
+        private int indentLevel = 0;
+        private static final String INDENT = "    "; // 4 Leerzeichen
+
+        private String indent() {
+            return INDENT.repeat(indentLevel);
+        }
+
+        @Override
+        public Node visitProgram(Aufgabe31Parser.ProgramContext ctx) {
+            ArrayList<Statement> s = new ArrayList<>();
+            for (Aufgabe31Parser.StatementContext stmt : ctx.statement()) {
+                s.add((Statement) visit(stmt));
+            }
+            return new Prog(s);
+        }
+
+        @Override
+        public Statement visitStatement(Aufgabe31Parser.StatementContext ctx) {
+            if (ctx.vardec() != null) {
+                return  visitVardec(ctx.vardec());
+            } else if (ctx.assign() != null) {
+                return  visitAssign(ctx.assign());
+            } else if (ctx.expr() != null) {
+                return (Statement) visit(ctx.expr());
+            } else if (ctx.loop() != null) {
+                return (Statement) visit(ctx.loop());
+            } else if (ctx.condition() != null) {
+                return (Statement) visit(ctx.condition());
+            }
+            return result;
+        }
+
+        @Override
+        public String visitLoop(Aufgabe31Parser.LoopContext ctx) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(indent()).append("while ").append(visit(ctx.expr())).append(" do\n");
+
+            indentLevel++;
+            for (Aufgabe31Parser.StatementContext stmt : ctx.statement()) {
+                sb.append(visit(stmt));
+            }
+            indentLevel--;
+
+            sb.append(indent()).append("end\n");
+            return sb.toString();
+        }
+
+        @Override
+        public String visitCondition(Aufgabe31Parser.ConditionContext ctx) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(indent()).append("if ").append(visit(ctx.expr())).append(" do\n");
+
+            indentLevel++;
+            for (int i = 0; i < ctx.statement().size(); i++) {
+                Aufgabe31Parser.StatementContext stmt = ctx.statement(i);
+
+                // Prüfe ob wir beim else-Zweig sind
+                if (i > 0 && ctx.getText().contains("elsedo")) {
+                    // Finde den Index wo else beginnt
+                    String fullText = ctx.getText();
+                    int elsePos = fullText.indexOf("elsedo");
+                    int stmtPos = fullText.indexOf(stmt.getText());
+
+                    if (stmtPos > elsePos && i == ctx.statement().size() / 2) {
+                        indentLevel--;
+                        sb.append(indent()).append("else do\n");
+                        indentLevel++;
+                    }
+                }
+
+                sb.append(visit(stmt));
+            }
+            indentLevel--;
+
+            sb.append(indent()).append("end\n");
+            return sb.toString();
+        }
+
+
+        @Override
+        public Assign visitAssign(Aufgabe31Parser.AssignContext ctx) {
+            return new Assign(ctx.ID().getText(), visitExpr(ctx.expr()));
+        }
+
+        @Override
+        public Conditional visitExpr(Aufgabe31Parser.ExprContext ctx) {
+
+            if (ctx.comparison() != null) {
+                return visit(ctx.comparison());
+            } else if (ctx.STRING() != null) {
+                return ctx.STRING().getText();
+            }
+            return null;
+        }
+
+        @Override
+        public String visitComparison(Aufgabe31Parser.ComparisonContext ctx) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(visit(ctx.addition(0)));
+
+            for (int i = 1; i < ctx.addition().size(); i++) {
+                String op = "";
+                if (ctx.EQUAL(i - 1) != null) op = " == ";
+                else if (ctx.NEQUAL(i - 1) != null) op = " != ";
+                else if (ctx.LESSTHAN(i - 1) != null) op = " < ";
+                else if (ctx.GREATERTHAN(i - 1) != null) op = " > ";
+
+                sb.append(op).append(visit(ctx.addition(i)));
+            }
+
+            return sb.toString();
+        }
+
+        @Override
+        public String visitAddition(Aufgabe31Parser.AdditionContext ctx) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(visit(ctx.multiplication(0)));
+
+            for (int i = 1; i < ctx.multiplication().size(); i++) {
+                String op = "";
+                if (ctx.PLUS(i - 1) != null) op = " + ";
+                else if (ctx.MINUS(i - 1) != null) op = " - ";
+
+                sb.append(op).append(visit(ctx.multiplication(i)));
+            }
+
+            return sb.toString();
+        }
+
+        @Override
+        public String visitMultiplication(Aufgabe31Parser.MultiplicationContext ctx) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(visit(ctx.idOrNum(0)));
+
+            for (int i = 1; i < ctx.idOrNum().size(); i++) {
+                String op = "";
+                if (ctx.MUL(i - 1) != null) op = " * ";
+                else if (ctx.DIV(i - 1) != null) op = " / ";
+
+                sb.append(op).append(visit(ctx.idOrNum(i)));
+            }
+
+            return sb.toString();
+        }
+
+        @Override
+        public String visitIdOrNum(Aufgabe31Parser.IdOrNumContext ctx) {
+            if (ctx.ID() != null) {
+                return ctx.ID().getText();
+            } else if (ctx.NUMBER() != null) {
+                return ctx.NUMBER().getText();
+            } else if (ctx.expr() != null) {
+                return "(" + visit(ctx.expr()) + ")";
+            }
+            return "";
+        }
     }
 }
 

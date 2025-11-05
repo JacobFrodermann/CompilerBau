@@ -6,26 +6,22 @@ program :  statement* EOF ;
 
 // while und if
 loop   :  'while' expr 'do' statement+;
-condition : 'if' expr 'do' statement+ ('else' 'do' statement+)? 'end' ;
+conditional : 'if' comparison 'do' statement+ ('else' 'do' statement+)? 'end' ;
 // Variablen (ohne typen wie in dem Beispiel)
-vardec  :  ID (ASSIGN expr)?;
-assign  :  ID ASSIGN expr;
+assign  :  ID ASSIGN (idOrNum | STRING);
 // comparison hat am wenigsten Vorrang, Multiplikation z.B. am meisten
 expr : comparison | STRING ; // String hier einzeln, damit man keine Strings multiplizieren kann
-comparison : addition ( (EQUAL | NEQUAL | LESSTHAN | GREATERTHAN) addition )* ;
+comparison : (addition  (EQUAL | NEQUAL | LESSTHAN | GREATERTHAN) addition) | (STRING (EQUAL | NEQUAL) STRING) ;
 addition : multiplication ( (PLUS | MINUS) multiplication )* ;
 multiplication : idOrNum ( (MUL | DIV) idOrNum )* ; // Multiplikation mit IDs oder Zahlen, aber ohne Strings
 // 1 == 1 == 1 >= 1
 idOrNum : ID
     | NUMBER
-    | '(' expr ')' // fuer Klammern , zb 1 + (2 * 3)
     ;
 
-statement:  vardec
-    |  assign
-    |  expr
+statement: assign
     |  loop
-    |  condition
+    |  conditional
     ;
 
 // Lexer
