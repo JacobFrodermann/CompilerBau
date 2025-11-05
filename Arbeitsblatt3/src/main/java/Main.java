@@ -28,7 +28,10 @@ public class Main {
 
         IO.println(tree.toStringTree(parser));
         var a = new PrettyPrintVisitor();
-        IO.println(a.visit(tree));
+        //IO.println(a.visit(tree));
+
+        var ast = (AST.Prog) new AST.AstVisitor().visit(tree);
+        IO.println(ast.toString());
 /*
     // Einlesen über den Classpath
     IO.readln("enter?> ");
