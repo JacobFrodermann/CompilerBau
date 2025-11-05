@@ -252,7 +252,7 @@ public class Main {
         }
     }
 
-    static class Comparison {
+    static class Comparison extends Expr{
         String operator;
         Expr a, b;
 
@@ -349,37 +349,26 @@ public class Main {
 
         @Override
         public Statement visitStatement(Aufgabe31Parser.StatementContext ctx) {
-            if (ctx.vardec() != null) {
-                return  visitVardec(ctx.vardec());
-            } else if (ctx.assign() != null) {
+            if (ctx.assign() != null) {
                 return  visitAssign(ctx.assign());
-            } else if (ctx.expr() != null) {
-                return (Statement) visit(ctx.expr());
             } else if (ctx.loop() != null) {
                 return (Statement) visit(ctx.loop());
-            } else if (ctx.condition() != null) {
-                return (Statement) visit(ctx.condition());
+            } else {
+                return (Statement) visit(ctx.conditional());
             }
-            return result;
         }
 
         @Override
-        public String visitLoop(Aufgabe31Parser.LoopContext ctx) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(indent()).append("while ").append(visit(ctx.expr())).append(" do\n");
-
-            indentLevel++;
+        public WhileLoop visitLoop(Aufgabe31Parser.LoopContext ctx) {
+            List<Statement> body = new ArrayList<>();
             for (Aufgabe31Parser.StatementContext stmt : ctx.statement()) {
-                sb.append(visit(stmt));
+                body.add(visitStatement(stmt));
             }
-            indentLevel--;
-
-            sb.append(indent()).append("end\n");
-            return sb.toString();
+            return new WhileLoop(visitComparison(ctx.comparison()),body);
         }
 
         @Override
-        public String visitCondition(Aufgabe31Parser.ConditionContext ctx) {
+        public Conditional visitConditional(Aufgabe31Parser.ConditionalContext ctx) {
             StringBuilder sb = new StringBuilder();
             sb.append(indent()).append("if ").append(visit(ctx.expr())).append(" do\n");
 
@@ -406,7 +395,7 @@ public class Main {
             indentLevel--;
 
             sb.append(indent()).append("end\n");
-            return sb.toString();
+            return new Conditional(visitComparison(ctx.comparison()));
         }
 
 
@@ -427,25 +416,22 @@ public class Main {
         }
 
         @Override
-        public String visitComparison(Aufgabe31Parser.ComparisonContext ctx) {
+        public Comparison visitComparison(Aufgabe31Parser.ComparisonContext ctx) {
             StringBuilder sb = new StringBuilder();
             sb.append(visit(ctx.addition(0)));
 
-            for (int i = 1; i < ctx.addition().size(); i++) {
                 String op = "";
-                if (ctx.EQUAL(i - 1) != null) op = " == ";
-                else if (ctx.NEQUAL(i - 1) != null) op = " != ";
-                else if (ctx.LESSTHAN(i - 1) != null) op = " < ";
-                else if (ctx.GREATERTHAN(i - 1) != null) op = " > ";
+                if (ctx.EQUAL() != null) op = " == ";
+                else if (ctx.NEQUAL() != null) op = " != ";
+                else if (ctx.LESSTHAN() != null) op = " < ";
+                else if (ctx.GREATERTHAN() != null) op = " > ";
 
-                sb.append(op).append(visit(ctx.addition(i)));
-            }
 
-            return sb.toString();
+            return new Comparison(op, visitExpr(ctx.expresion()), ctx.addition(1));
         }
 
         @Override
-        public String visitAddition(Aufgabe31Parser.AdditionContext ctx) {
+        public Operation visitAddition(Aufgabe31Parser.AdditionContext ctx) {
             StringBuilder sb = new StringBuilder();
             sb.append(visit(ctx.multiplication(0)));
 
@@ -457,7 +443,7 @@ public class Main {
                 sb.append(op).append(visit(ctx.multiplication(i)));
             }
 
-            return sb.toString();
+            return new Operation();
         }
 
         @Override

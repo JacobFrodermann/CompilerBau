@@ -5,7 +5,7 @@ grammar Aufgabe31;
 program :  statement* EOF ;
 
 // while und if
-loop   :  'while' expr 'do' statement+;
+loop   :  'while' comparison 'do' statement+;
 conditional : 'if' comparison 'do' statement+ ('else' 'do' statement+)? 'end' ;
 // Variablen (ohne typen wie in dem Beispiel)
 assign  :  ID ASSIGN (idOrNum | STRING);
