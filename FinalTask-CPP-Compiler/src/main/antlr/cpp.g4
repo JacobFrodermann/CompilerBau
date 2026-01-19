@@ -19,11 +19,11 @@ functionDecl: OBJ_NAME OBJ_NAME args ';';
 functionCallStmt: OBJ_NAME args ';';
 
 args: '(' (arg (',' arg)*)? ')';
-arg: OBJ_NAME OBJ_NAME;
+arg: OBJ_NAME '&'? OBJ_NAME;
 
 // classes
 
-classDefinition: 'class' OBJ_NAME '{' 'public' ':' classBody '}' ';';
+classDefinition: 'class' OBJ_NAME (':' 'public' OBJ_NAME)? '{' 'public' ':' classBody '}' ';';
 
 classBody: (fieldDecl | constructorDef | methodDef)*;
 
@@ -41,8 +41,8 @@ whileStmt: 'while' '(' value ')' statement;
 
 // variables
 
-varDecl: OBJ_NAME OBJ_NAME ';';
-varDef: OBJ_NAME OBJ_NAME '=' value ';';
+varDecl: OBJ_NAME '&'? OBJ_NAME ';';
+varDef: OBJ_NAME '&'? OBJ_NAME '=' value ';';
 
 value: (comparison | math | functionCallExpr | literal | OBJ_NAME | memberAccess);
 
