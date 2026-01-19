@@ -2,10 +2,7 @@ grammar cpp;
 
 start: stmt* EOF;
 
-stmt: (definition | declaration)+;
-
-definition: functionDef | classDefinition | varDef;
-declaration: functionDecl | varDecl;
+stmt: (functionDef | classDefinition | varDef | functionDecl | varDecl)+;
 
 // functions
 
