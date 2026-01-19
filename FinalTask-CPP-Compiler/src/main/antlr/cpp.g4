@@ -1,50 +1,55 @@
 grammar cpp;
-start: stmt*;
 
-stmt: (definition | declaration | ws)+;
+start: stmt* EOF;
+
+stmt: (classDefinition | definition | declaration)+;
 
 definition: functionDef;
 declaration: functionDecl;
 
-// functions
 functionBody: expr*;
-expr: functionCall | ';' | ws | returnSTMT | varDecl | varDef;
 
-functionDef:  OBJ_NAME space OBJ_NAME args ws* '{' ws* functionBody ws* '}';
-functionDecl: OBJ_NAME space OBJ_NAME args space ';';
+expr: (assignment | functionCall | ';' | returnSTMT);
+
+assignment: OBJ_NAME '=' value ';';
+
+functionDef: OBJ_NAME OBJ_NAME args '{' functionBody '}';
+functionDecl: OBJ_NAME OBJ_NAME args ';';
 functionCall: OBJ_NAME args;
 
-args: '('(arg (optSpace ',' optSpace arg)* )? ')';
-arg: (OBJ_NAME space OBJ_NAME);
+classDefinition: 'class' OBJ_NAME '{' 'public' ':' classBody '}' ';';
 
-// variables
-varDecl: OBJ_NAME space OBJ_NAME space ';';
-varDef: OBJ_NAME space OBJ_NAME space '=' space value;
+classBody: (fieldDecl | constructorDef | methodDef)*;
 
-value: functionCall | literal | comparison;
-literal: intLiteral
-        | stringLiteral
-        | boolLiteral;
+fieldDecl: OBJ_NAME OBJ_NAME ';';
 
-intLiteral: NUM;
+constructorDef: OBJ_NAME '(' ')' '{' functionBody '}';
 
-// bool stuff
+methodDef: OBJ_NAME OBJ_NAME '(' ')' '{' functionBody '}';
+
+args: '(' (arg (',' arg)*)? ')';
+arg: OBJ_NAME OBJ_NAME;
+
+varDecl: OBJ_NAME OBJ_NAME ';';
+varDef: OBJ_NAME OBJ_NAME '=' value ';';
+
+value: (memberAccess | functionCall | literal | comparison | OBJ_NAME);
+memberAccess: OBJ_NAME '.' OBJ_NAME;
+
+
+literal: (stringLiteral | intLiteral | boolLiteral);
+
+intLiteral: NUM+;
+
 boolLiteral: 'true' | 'false';
 
-// operations
-comparison: (functionCall | literal) space ('==' | '=<' | '=>' | '>' | '<') space (functionCall | literal);
-bitwiseOP: '|' | '&';
+comparison: (functionCall | literal | OBJ_NAME) ('==' | '<=' | '>=' | '!=' | '>' | '<') (functionCall | literal | OBJ_NAME);
 
-//return
-returnSTMT: 'return' (space expr)? optSpace ';';
+returnSTMT: 'return' expr? ';';
 
-// literals
-stringLiteral: '"' ('\\'?.) '"';
+stringLiteral: '"' .*? '"';
 
-ws:(' ' | '\n');
-space: ' '+;
-optSpace: ' '*;
 
-NUM: [0-9]+;
-OBJ_NAME:[a-zA-Z][a-zA-Z0-9]*;
-CHAR: [a-zA-Z0-9];
+OBJ_NAME: [a-zA-Z][a-zA-Z0-9_]*;
+NUM: [0-9];
+WS: [ \t\r\n]+ -> skip;
