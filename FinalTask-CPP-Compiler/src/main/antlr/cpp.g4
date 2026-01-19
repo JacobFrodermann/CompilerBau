@@ -14,7 +14,7 @@ block: '{' statement* '}';
 
 assignment: (memberAccess | OBJ_NAME) '=' value ';';
 
-functionDef: OBJ_NAME OBJ_NAME args '{' functionBody '}';
+functionDef: OBJ_NAME OBJ_NAME args block;
 functionDecl: OBJ_NAME OBJ_NAME args ';';
 functionCallStmt: OBJ_NAME args ';';
 
