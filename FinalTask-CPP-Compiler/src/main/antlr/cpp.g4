@@ -6,20 +6,20 @@ toplvl: (functionDef | classDefinition | varDef | functionDecl | varDecl )+;
 
 // functions
 
-functionBody: statement*;
-
 statement: varDef | varDecl | assignment | functionCallStmt | ifStmt | whileStmt | returnSTMT | block | ';';
 
 block: '{' statement* '}';
 
 assignment: (memberAccess | OBJ_NAME) '=' value ';';
 
-functionDef: OBJ_NAME OBJ_NAME args block;
-functionDecl: OBJ_NAME OBJ_NAME args ';';
-functionCallStmt: OBJ_NAME args ';';
+functionDef: OBJ_NAME OBJ_NAME params block;
+functionDecl: OBJ_NAME OBJ_NAME params ';';
+functionCallStmt: OBJ_NAME callArgs ';';
 
-args: '(' (arg (',' arg)*)? ')';
-arg: OBJ_NAME '&'? OBJ_NAME;
+params: '(' (param (',' param)*)? ')';
+param: OBJ_NAME '&'? OBJ_NAME;
+
+callArgs: '(' (value (',' value)*)? ')';
 
 // classes
 
@@ -29,9 +29,9 @@ classBody: (fieldDecl | constructorDef | methodDef)*;
 
 fieldDecl: OBJ_NAME OBJ_NAME ';';
 
-constructorDef: OBJ_NAME '(' ')' '{' functionBody '}';
+constructorDef: OBJ_NAME params block;
 
-methodDef: 'virtual'? OBJ_NAME OBJ_NAME '(' ')' '{' functionBody '}';
+methodDef: 'virtual'? OBJ_NAME OBJ_NAME params block;
 
 // flow control
 
@@ -70,9 +70,9 @@ multiplicative: unary (('*' | '/' | '%') unary)*;
 
 unary: ('+' | '-' | '!')? primary;
 
-primary: (functionCallExpr | intLiteral | boolLiteral | OBJ_NAME | memberAccess | '(' value ')');
+primary: (functionCallExpr | literal | OBJ_NAME | memberAccess | '(' value ')');
 
-functionCallExpr: OBJ_NAME args;
+functionCallExpr: OBJ_NAME callArgs;
 
 // return
 
