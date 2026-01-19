@@ -78,6 +78,10 @@ returnSTMT: 'return' value? ';';
 
 // lexer
 
+LINE_COMMENT: '//' ~[\r\n]* -> skip;
+BLOCK_COMMENT: '/*' .*? '*/' -> skip;
+PREPROCESSOR: '#' ~[\r\n]* -> skip;
+
 STRING_LITERAL: '"' (~["\\\r\n] | '\\' .)* '"';
 NUM: [0-9]+;
 OBJ_NAME: [a-zA-Z][a-zA-Z0-9_]*;
