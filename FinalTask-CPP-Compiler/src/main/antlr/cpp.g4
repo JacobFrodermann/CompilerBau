@@ -44,8 +44,13 @@ whileStmt: 'while' '(' value ')' statement;
 varDecl: OBJ_NAME '&'? OBJ_NAME ';';
 varDef: OBJ_NAME '&'? OBJ_NAME '=' value ';';
 
-value: comparison | math | functionCallExpr | literal | OBJ_NAME | memberAccess | logicalNot;
-logicalNot: '!' value;
+value: logicalOr;
+
+logicalOr: logicalAnd ('||' logicalAnd)*;
+
+logicalAnd: comparison ('&&' comparison)*;
+
+comparison: math (('==' | '<=' | '>=' | '!=' | '>' | '<') math)?;
 
 memberAccess: OBJ_NAME '.' OBJ_NAME;
 
@@ -57,19 +62,15 @@ intLiteral: NUM;
 
 boolLiteral: 'true' | 'false';
 
-// operations
-
-comparison: math (('==' | '<=' | '>=' | '!=' | '>' | '<') math)?;
-
 // math (int)
 
 math: multiplicative (('+' | '-') multiplicative)*;
 
 multiplicative: unary (('*' | '/' | '%') unary)*;
 
-unary: ('+' | '-')? primary;
+unary: ('+' | '-' | '!')? primary;
 
-primary: (functionCallExpr | intLiteral | OBJ_NAME | memberAccess | '(' math ')');
+primary: (functionCallExpr | intLiteral | boolLiteral | OBJ_NAME | memberAccess | '(' value ')');
 
 functionCallExpr: OBJ_NAME args;
 
