@@ -44,15 +44,23 @@ whileStmt: 'while' '(' value ')' statement;
 varDecl: OBJ_NAME OBJ_NAME ';';
 varDef: OBJ_NAME OBJ_NAME '=' value ';';
 
-value: (memberAccess | functionCall | literal | comparison | OBJ_NAME);
+value: (memberAccess | functionCall | literal | comparison | OBJ_NAME | intValue);
 
 memberAccess: OBJ_NAME '.' OBJ_NAME;
 
-// literals
+// int handling
 
-literal: (STRING_LITERAL | intLiteral | boolLiteral);
+intValue: intLiteral | math | functionCall | memberAccess;
 
 intLiteral: NUM;
+math: multiplicative (('+' | '-') multiplicative);
+multiplicative: innerIntValue (('/' | '%') innerIntValue)*;
+
+innerIntValue: intLiteral | functionCall | memberAccess;
+
+// literals
+
+literal: (STRING_LITERAL | boolLiteral);
 
 boolLiteral: 'true' | 'false';
 
