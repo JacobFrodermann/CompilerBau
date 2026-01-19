@@ -8,7 +8,7 @@ stmt: (functionDef | classDefinition | varDef | functionDecl | varDecl)+;
 
 functionBody: statement*;
 
-statement: (varDef | varDecl | assignment | functionCallStmt | ifStmt | whileStmt | returnSTMT | block | ';');
+statement: varDef | varDecl | assignment | functionCallStmt | ifStmt | whileStmt | returnSTMT | block | ';';
 
 block: '{' statement* '}';
 
@@ -44,13 +44,13 @@ whileStmt: 'while' '(' value ')' statement;
 varDecl: OBJ_NAME '&'? OBJ_NAME ';';
 varDef: OBJ_NAME '&'? OBJ_NAME '=' value ';';
 
-value: (comparison | math | functionCallExpr | literal | OBJ_NAME | memberAccess);
+value: comparison | math | functionCallExpr | literal | OBJ_NAME | memberAccess;
 
 memberAccess: OBJ_NAME '.' OBJ_NAME;
 
 // literals
 
-literal: (STRING_LITERAL | intLiteral | boolLiteral);
+literal: STRING_LITERAL | intLiteral | boolLiteral;
 
 intLiteral: NUM;
 
