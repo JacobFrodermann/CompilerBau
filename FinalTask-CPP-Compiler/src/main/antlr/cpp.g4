@@ -2,10 +2,12 @@ grammar cpp;
 
 start: stmt* EOF;
 
-stmt: (classDefinition | definition | declaration)+;
+stmt: (definition | declaration)+;
 
-definition: functionDef;
-declaration: functionDecl;
+definition: functionDef | classDefinition | varDef;
+declaration: functionDecl | varDecl;
+
+// functions
 
 functionBody: expr*;
 
@@ -16,6 +18,8 @@ assignment: OBJ_NAME '=' value ';';
 functionDef: OBJ_NAME OBJ_NAME args '{' functionBody '}';
 functionDecl: OBJ_NAME OBJ_NAME args ';';
 functionCall: OBJ_NAME args;
+
+// classes
 
 classDefinition: 'class' OBJ_NAME '{' 'public' ':' classBody '}' ';';
 
@@ -30,16 +34,25 @@ methodDef: OBJ_NAME OBJ_NAME '(' ')' '{' functionBody '}';
 args: '(' (arg (',' arg)*)? ')';
 arg: OBJ_NAME OBJ_NAME;
 
+// flowControll
+
+flowControll: if | while;
+if: 'if'WS'(' value ')'WS'{'WS expr* WS '}'(WS 'else' WS '{'expr* '}')?;
+while:'while'WS'(' value ')'WS'{'WS expr* WS '}';
+
+// Variabels
+
 varDecl: OBJ_NAME OBJ_NAME ';';
 varDef: OBJ_NAME OBJ_NAME '=' value ';';
 
 value: (memberAccess | functionCall | literal | comparison | OBJ_NAME);
 memberAccess: OBJ_NAME '.' OBJ_NAME;
 
+// literals
 
 literal: (stringLiteral | intLiteral | boolLiteral);
 
-intLiteral: NUM+;
+intLiteral: '-'? NUM;
 
 boolLiteral: 'true' | 'false';
 
@@ -50,6 +63,6 @@ returnSTMT: 'return' expr? ';';
 stringLiteral: '"' .*? '"';
 
 
+NUM: [0-9]+;
 OBJ_NAME: [a-zA-Z][a-zA-Z0-9_]*;
-NUM: [0-9];
 WS: [ \t\r\n]+ -> skip;
