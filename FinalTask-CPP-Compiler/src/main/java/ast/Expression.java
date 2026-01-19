@@ -14,7 +14,8 @@ public sealed interface Expression extends ASTNode {
   // Variables & Access
   record Variable(String name) implements Expression {}
 
-  record MemberAccess(Expression object, String memberName) implements Expression {} // object meist Variable
+  record MemberAccess(Expression object, String memberName)
+      implements Expression {} // object meist Variable
 
   // Function Call als Expression
   record FunctionCall(String functionName, List<Expression> arguments) implements Expression {}
@@ -22,7 +23,8 @@ public sealed interface Expression extends ASTNode {
   // Binary Operations
   record BinaryOp(Expression left, String operator, Expression right)
       implements Expression {} // "+", "-", "*", "/", "%", "==", "!=", "<", ">", "<=", ">=", "&&",
-                               // "||"
+
+  // "||"
 
   // Unary Operations
   record UnaryOp(String operator, Expression operand) implements Expression {} // "+", "-", "!"
