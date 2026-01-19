@@ -8,7 +8,7 @@ stmt: (functionDef | classDefinition | varDef | functionDecl | varDecl)+;
 
 functionBody: statement*;
 
-statement: (assignment | functionCall | ifStmt | whileStmt | returnSTMT | block | ';');
+statement: (varDef | varDecl | assignment | functionCallStmt | ifStmt | whileStmt | returnSTMT | block | ';');
 
 block: '{' statement* '}';
 
@@ -16,7 +16,7 @@ assignment: (memberAccess | OBJ_NAME) '=' value ';';
 
 functionDef: OBJ_NAME OBJ_NAME args '{' functionBody '}';
 functionDecl: OBJ_NAME OBJ_NAME args ';';
-functionCall: OBJ_NAME args ';';
+functionCallStmt: OBJ_NAME args ';';
 
 args: '(' (arg (',' arg)*)? ')';
 arg: OBJ_NAME OBJ_NAME;
@@ -44,7 +44,7 @@ whileStmt: 'while' '(' value ')' statement;
 varDecl: OBJ_NAME OBJ_NAME ';';
 varDef: OBJ_NAME OBJ_NAME '=' value ';';
 
-value: (memberAccess | functionCall | literal | comparison | OBJ_NAME);
+value: (comparison | math | functionCallExpr | literal | OBJ_NAME | memberAccess);
 
 memberAccess: OBJ_NAME '.' OBJ_NAME;
 
@@ -58,7 +58,19 @@ boolLiteral: 'true' | 'false';
 
 // operations
 
-comparison: (functionCall | literal | OBJ_NAME) ('==' | '<=' | '>=' | '!=' | '>' | '<') (functionCall | literal | OBJ_NAME);
+comparison: math (('==' | '<=' | '>=' | '!=' | '>' | '<') math)?;
+
+// math (int)
+
+math: multiplicative (('+' | '-') multiplicative)*;
+
+multiplicative: unary (('*' | '/' | '%') unary)*;
+
+unary: ('+' | '-')? primary;
+
+primary: (functionCallExpr | intLiteral | OBJ_NAME | memberAccess | '(' math ')');
+
+functionCallExpr: OBJ_NAME args;
 
 // return
 
@@ -67,6 +79,6 @@ returnSTMT: 'return' value? ';';
 // lexer
 
 STRING_LITERAL: '"' (~["\\\r\n] | '\\' .)* '"';
-NUM: '-'? [0-9]+;
+NUM: [0-9]+;
 OBJ_NAME: [a-zA-Z][a-zA-Z0-9_]*;
 WS: [ \t\r\n]+ -> skip;
