@@ -1,8 +1,8 @@
 grammar cpp;
 
-start: stmt* EOF;
+start: toplvl* EOF;
 
-stmt: (functionDef | classDefinition | varDef | functionDecl | varDecl)+;
+toplvl: (functionDef | classDefinition | varDef | functionDecl | varDecl )+;
 
 // functions
 
