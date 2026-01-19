@@ -8,7 +8,7 @@ declaration: functionDecl;
 
 // functions
 functionBody: expr*;
-expr: (functionCall | ';' | ws | returnSTMT);
+expr: functionCall | ';' | ws | returnSTMT | varDecl | varDef;
 
 functionDef:  OBJ_NAME space OBJ_NAME args ws* '{' ws* functionBody ws* '}';
 functionDecl: OBJ_NAME space OBJ_NAME args space ';';
@@ -21,8 +21,10 @@ arg: (OBJ_NAME space OBJ_NAME);
 varDecl: OBJ_NAME space OBJ_NAME space ';';
 varDef: OBJ_NAME space OBJ_NAME space '=' space value;
 
-value: (functionCall | literal | comparison);
-literal: (stringLiteral | intLiteral | boolLiteral);
+value: functionCall | literal | comparison;
+literal: intLiteral
+        | stringLiteral
+        | boolLiteral;
 
 intLiteral: NUM;
 
@@ -43,6 +45,6 @@ ws:(' ' | '\n');
 space: ' '+;
 optSpace: ' '*;
 
+NUM: [0-9]+;
 OBJ_NAME:[a-zA-Z][a-zA-Z0-9]*;
 CHAR: [a-zA-Z0-9];
-NUM: [0-9];
