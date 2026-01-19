@@ -44,7 +44,8 @@ whileStmt: 'while' '(' value ')' statement;
 varDecl: OBJ_NAME '&'? OBJ_NAME ';';
 varDef: OBJ_NAME '&'? OBJ_NAME '=' value ';';
 
-value: comparison | math | functionCallExpr | literal | OBJ_NAME | memberAccess;
+value: comparison | math | functionCallExpr | literal | OBJ_NAME | memberAccess | logicalNot;
+logicalNot: '!' value;
 
 memberAccess: OBJ_NAME '.' OBJ_NAME;
 
