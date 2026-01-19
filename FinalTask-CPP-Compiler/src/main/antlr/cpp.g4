@@ -6,15 +6,20 @@ stmt: (functionDef | classDefinition | varDef | functionDecl | varDecl)+;
 
 // functions
 
-functionBody: expr*;
+functionBody: statement*;
 
-expr: (assignment | functionCall | ';' | returnSTMT);
+statement: (assignment | functionCall | ifStmt | whileStmt | returnSTMT | block | ';');
 
-assignment: OBJ_NAME '=' value ';';
+block: '{' statement* '}';
+
+assignment: (memberAccess | OBJ_NAME) '=' value ';';
 
 functionDef: OBJ_NAME OBJ_NAME args '{' functionBody '}';
 functionDecl: OBJ_NAME OBJ_NAME args ';';
-functionCall: OBJ_NAME args;
+functionCall: OBJ_NAME args ';';
+
+args: '(' (arg (',' arg)*)? ')';
+arg: OBJ_NAME OBJ_NAME;
 
 // classes
 
@@ -26,40 +31,42 @@ fieldDecl: OBJ_NAME OBJ_NAME ';';
 
 constructorDef: OBJ_NAME '(' ')' '{' functionBody '}';
 
-methodDef: OBJ_NAME OBJ_NAME '(' ')' '{' functionBody '}';
+methodDef: 'virtual'? OBJ_NAME OBJ_NAME '(' ')' '{' functionBody '}';
 
-args: '(' (arg (',' arg)*)? ')';
-arg: OBJ_NAME OBJ_NAME;
+// flow control
 
-// flowControll
+ifStmt: 'if' '(' value ')' statement ('else' statement)?;
 
-flowControll: if | while;
-if: 'if'WS'(' value ')'WS'{'WS expr* WS '}'(WS 'else' WS '{'expr* '}')?;
-while:'while'WS'(' value ')'WS'{'WS expr* WS '}';
+whileStmt: 'while' '(' value ')' statement;
 
-// Variabels
+// variables
 
 varDecl: OBJ_NAME OBJ_NAME ';';
 varDef: OBJ_NAME OBJ_NAME '=' value ';';
 
 value: (memberAccess | functionCall | literal | comparison | OBJ_NAME);
+
 memberAccess: OBJ_NAME '.' OBJ_NAME;
 
 // literals
 
-literal: (stringLiteral | intLiteral | boolLiteral);
+literal: (STRING_LITERAL | intLiteral | boolLiteral);
 
-intLiteral: '-'? NUM;
+intLiteral: NUM;
 
 boolLiteral: 'true' | 'false';
 
+// operations
+
 comparison: (functionCall | literal | OBJ_NAME) ('==' | '<=' | '>=' | '!=' | '>' | '<') (functionCall | literal | OBJ_NAME);
 
-returnSTMT: 'return' expr? ';';
+// return
 
-stringLiteral: '"' .*? '"';
+returnSTMT: 'return' value? ';';
 
+// lexer
 
-NUM: [0-9]+;
+STRING_LITERAL: '"' (~["\\\r\n] | '\\' .)* '"';
+NUM: '-'? [0-9]+;
 OBJ_NAME: [a-zA-Z][a-zA-Z0-9_]*;
 WS: [ \t\r\n]+ -> skip;
