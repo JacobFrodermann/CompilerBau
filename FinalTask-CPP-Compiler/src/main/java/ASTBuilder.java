@@ -329,6 +329,7 @@ public class ASTBuilder extends cppBaseVisitor<ASTNode> {
     }
 
     // Helper: Parse call arguments (für Funktionsaufrufe)
+    // so koennen wir halt ne liste von expression zurückgeben, iwie geht das mit nem visitor nicht gut weil der nur 1 ASTNode zurückgeben kann
     private List<Expression> parseCallArgs(cppParser.CallArgsContext ctx) {
         List<Expression> args = new ArrayList<>();
         if (ctx.value() != null) {
