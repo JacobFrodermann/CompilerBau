@@ -17,15 +17,15 @@ public interface cppListener extends ParseTreeListener {
 	 */
 	void exitStart(cppParser.StartContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link cppParser#stmt}.
+	 * Enter a parse tree produced by {@link cppParser#toplvl}.
 	 * @param ctx the parse tree
 	 */
-	void enterStmt(cppParser.StmtContext ctx);
+	void enterToplvl(cppParser.ToplvlContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link cppParser#stmt}.
+	 * Exit a parse tree produced by {@link cppParser#toplvl}.
 	 * @param ctx the parse tree
 	 */
-	void exitStmt(cppParser.StmtContext ctx);
+	void exitToplvl(cppParser.ToplvlContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link cppParser#functionBody}.
 	 * @param ctx the parse tree
@@ -217,15 +217,35 @@ public interface cppListener extends ParseTreeListener {
 	 */
 	void exitValue(cppParser.ValueContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link cppParser#logicalNot}.
+	 * Enter a parse tree produced by {@link cppParser#logicalOr}.
 	 * @param ctx the parse tree
 	 */
-	void enterLogicalNot(cppParser.LogicalNotContext ctx);
+	void enterLogicalOr(cppParser.LogicalOrContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link cppParser#logicalNot}.
+	 * Exit a parse tree produced by {@link cppParser#logicalOr}.
 	 * @param ctx the parse tree
 	 */
-	void exitLogicalNot(cppParser.LogicalNotContext ctx);
+	void exitLogicalOr(cppParser.LogicalOrContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link cppParser#logicalAnd}.
+	 * @param ctx the parse tree
+	 */
+	void enterLogicalAnd(cppParser.LogicalAndContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link cppParser#logicalAnd}.
+	 * @param ctx the parse tree
+	 */
+	void exitLogicalAnd(cppParser.LogicalAndContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link cppParser#comparison}.
+	 * @param ctx the parse tree
+	 */
+	void enterComparison(cppParser.ComparisonContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link cppParser#comparison}.
+	 * @param ctx the parse tree
+	 */
+	void exitComparison(cppParser.ComparisonContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link cppParser#memberAccess}.
 	 * @param ctx the parse tree
@@ -266,16 +286,6 @@ public interface cppListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBoolLiteral(cppParser.BoolLiteralContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link cppParser#comparison}.
-	 * @param ctx the parse tree
-	 */
-	void enterComparison(cppParser.ComparisonContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link cppParser#comparison}.
-	 * @param ctx the parse tree
-	 */
-	void exitComparison(cppParser.ComparisonContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link cppParser#math}.
 	 * @param ctx the parse tree

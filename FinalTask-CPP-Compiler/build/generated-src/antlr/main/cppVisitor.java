@@ -16,11 +16,11 @@ public interface cppVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStart(cppParser.StartContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link cppParser#stmt}.
+	 * Visit a parse tree produced by {@link cppParser#toplvl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStmt(cppParser.StmtContext ctx);
+	T visitToplvl(cppParser.ToplvlContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link cppParser#functionBody}.
 	 * @param ctx the parse tree
@@ -136,11 +136,23 @@ public interface cppVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitValue(cppParser.ValueContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link cppParser#logicalNot}.
+	 * Visit a parse tree produced by {@link cppParser#logicalOr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLogicalNot(cppParser.LogicalNotContext ctx);
+	T visitLogicalOr(cppParser.LogicalOrContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link cppParser#logicalAnd}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLogicalAnd(cppParser.LogicalAndContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link cppParser#comparison}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitComparison(cppParser.ComparisonContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link cppParser#memberAccess}.
 	 * @param ctx the parse tree
@@ -165,12 +177,6 @@ public interface cppVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBoolLiteral(cppParser.BoolLiteralContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link cppParser#comparison}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitComparison(cppParser.ComparisonContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link cppParser#math}.
 	 * @param ctx the parse tree

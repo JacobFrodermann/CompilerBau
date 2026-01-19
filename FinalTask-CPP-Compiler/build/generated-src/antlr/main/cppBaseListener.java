@@ -28,13 +28,13 @@ public class cppBaseListener implements cppListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStmt(cppParser.StmtContext ctx) { }
+	@Override public void enterToplvl(cppParser.ToplvlContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStmt(cppParser.StmtContext ctx) { }
+	@Override public void exitToplvl(cppParser.ToplvlContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -268,13 +268,37 @@ public class cppBaseListener implements cppListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLogicalNot(cppParser.LogicalNotContext ctx) { }
+	@Override public void enterLogicalOr(cppParser.LogicalOrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLogicalNot(cppParser.LogicalNotContext ctx) { }
+	@Override public void exitLogicalOr(cppParser.LogicalOrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLogicalAnd(cppParser.LogicalAndContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLogicalAnd(cppParser.LogicalAndContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterComparison(cppParser.ComparisonContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitComparison(cppParser.ComparisonContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -323,18 +347,6 @@ public class cppBaseListener implements cppListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBoolLiteral(cppParser.BoolLiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterComparison(cppParser.ComparisonContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitComparison(cppParser.ComparisonContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

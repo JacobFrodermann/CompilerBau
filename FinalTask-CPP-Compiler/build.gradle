@@ -15,6 +15,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     antlr 'org.antlr:antlr4:4.13.2'
+    implementation 'org.antlr:antlr4-runtime:4.13.2'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)  // use current Long-Term Support (LTS) release
@@ -45,7 +46,7 @@ test {
 
 spotless {
     java {
-        targetExclude('build/generated-src/**')
+        targetExclude('build/generated-src/**', 'src/main/antlr/.antlr/**')
         googleJavaFormat().reflowLongStrings()
 
         target '**/*.java'
