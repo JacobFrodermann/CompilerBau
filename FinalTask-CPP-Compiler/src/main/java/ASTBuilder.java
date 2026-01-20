@@ -171,9 +171,15 @@ public class ASTBuilder extends cppBaseVisitor<ASTNode> {
 
     @Override
     public Statement.FunctionCall visitFunctionCallStmt(cppParser.FunctionCallStmtContext ctx) {
-        String name = ctx.OBJ_NAME().getText();
-        List<Expression> args = parseCallArgs(ctx.callArgs());
-        return new Statement.FunctionCall(name, args);
+        if (ctx.memberAccess() != null) {
+            Expression.MemberAccess access = visitMemberAccess(ctx.memberAccess());
+            List<Expression> args = parseCallArgs(ctx.callArgs());
+            return new Statement.FunctionCall(access.memberName(), args);
+        } else {
+            String name = ctx.OBJ_NAME().getText();
+            List<Expression> args = parseCallArgs(ctx.callArgs());
+            return new Statement.FunctionCall(name, args);
+        }
     }
 
     @Override
@@ -315,10 +321,20 @@ public class ASTBuilder extends cppBaseVisitor<ASTNode> {
     }
 
     @Override
-    public Expression.FunctionCall visitFunctionCallExpr(cppParser.FunctionCallExprContext ctx) {
-        String name = ctx.OBJ_NAME().getText();
-        List<Expression> args = parseCallArgs(ctx.callArgs());
-        return new Expression.FunctionCall(name, args);
+    public Expression visitFunctionCallExpr(cppParser.FunctionCallExprContext ctx) {
+        //  ctx kann entweder OBJ_NAME oder memberAccess haben
+        if (ctx.memberAccess() != null) {
+            // Methodenaufruf: p.getX()
+            Expression.MemberAccess access = visitMemberAccess(ctx.memberAccess());
+            List<Expression> args = parseCallArgs(ctx.callArgs());
+            // Erstelle MethodCall statt FunctionCall ... leider bissl doof mit return type nur Expression, evtl hätte man einen gemeinsamen parent typ machen sollen
+            return new Expression.MethodCall(access.object(), access.memberName(), args);
+        } else {
+            // Normaler Funktionsaufruf: add()
+            String name = ctx.OBJ_NAME().getText();
+            List<Expression> args = parseCallArgs(ctx.callArgs());
+            return new Expression.FunctionCall(name, args);
+        }
     }
 
     @Override

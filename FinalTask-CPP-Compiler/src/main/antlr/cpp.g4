@@ -14,7 +14,7 @@ assignment: (memberAccess | OBJ_NAME) '=' value ';';
 
 functionDef: OBJ_NAME OBJ_NAME params block;
 functionDecl: OBJ_NAME OBJ_NAME params ';';
-functionCallStmt: OBJ_NAME callArgs ';';
+functionCallStmt: (OBJ_NAME | memberAccess) callArgs ';';
 
 params: '(' (param (',' param)*)? ')';
 param: OBJ_NAME '&'? OBJ_NAME;
@@ -72,7 +72,7 @@ unary: ('+' | '-' | '!')? primary;
 
 primary: (functionCallExpr | literal | OBJ_NAME | memberAccess | '(' value ')');
 
-functionCallExpr: OBJ_NAME callArgs;
+functionCallExpr: (OBJ_NAME | memberAccess) callArgs;
 
 // return
 

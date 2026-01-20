@@ -318,6 +318,31 @@ public class SemanticAnalyzer {
                 yield analyzeFunctionCall(call.functionName(), call.arguments());
             }
 
+            case Expression.MethodCall call -> {
+                Type objType = analyzeExpression(call.object());
+
+                Symbol classSymbol = globalSymbols.resolve(objType.name());
+                if (!(classSymbol instanceof Symbol.ClassSymbol)) {
+                    throw new SemanticException("Cannot call method on non-class type");
+                }
+
+                Symbol.ClassSymbol cls = (Symbol.ClassSymbol) classSymbol;
+
+                List<Type> argTypes = new ArrayList<>();
+                List<Boolean> argRefs = new ArrayList<>();
+                for (Expression arg : call.arguments()) {
+                    argTypes.add(analyzeExpression(arg));
+                    argRefs.add(isLValue(arg));
+                }
+
+                Symbol.FunctionSymbol method = cls.getMethod(call.methodName(), argTypes, argRefs);
+                if (method == null) {
+                    throw new SemanticException("Method not found: " + call.methodName());
+                }
+
+                yield method.returnType();
+            }
+
             case Expression.BinaryOp binOp -> {
                 Type leftType = analyzeExpression(binOp.left());
                 Type rightType = analyzeExpression(binOp.right());

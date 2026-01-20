@@ -19,6 +19,7 @@ public sealed interface Expression extends ASTNode {
 
   // Function Call als Expression
   record FunctionCall(String functionName, List<Expression> arguments) implements Expression {}
+    record MethodCall(Expression object, String methodName, List<Expression> arguments) implements Expression {}
 
   // Binary Operations
   record BinaryOp(Expression left, String operator, Expression right)
