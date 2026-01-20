@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
+import ast.Type;
 
 public class SymbolTable {
     private final Map<String, Symbol> symbols = new HashMap<>();
-    private final Map<String, List<Symbol.FunctionSymbol>> functions = new HashMap<>();  // Für Overloading
+    private final Map<String, List<Symbol.FunctionSymbol>> functions = new HashMap<>();
     private final SymbolTable parent;
     private final String scopeName;
 
@@ -20,25 +21,23 @@ public class SymbolTable {
         this.parent = parent;
     }
 
-    // Define Symbol
     public void define(Symbol symbol) throws SemanticException {
         String name = symbol.name();
 
         if (symbol instanceof Symbol.FunctionSymbol func) {
-            // Funktionen: Overloading erlaubt, aber nur mit unterschiedlicher Signatur
             List<Symbol.FunctionSymbol> overloads = functions.computeIfAbsent(name, k -> new ArrayList<>());
 
-            // Prüfe ob Signatur bereits existiert
+            // Prüfe auf doppelte Signatur
+            Signature newSig = func.signature();
             for (Symbol.FunctionSymbol existing : overloads) {
-                if (existing.signature().equals(func.signature())) {
-                    throw new SemanticException("Function already defined: " + func.signature());
+                if (existing.signature().equals(newSig)) {
+                    throw new SemanticException("Function already defined: " + newSig);
                 }
             }
             overloads.add(func);
-            symbols.put(name, func);  // Für einfache Lookup
+            symbols.put(name, func);
 
         } else {
-            // Variablen und Klassen: Keine Mehrfachdefinition
             if (symbols.containsKey(name)) {
                 throw new SemanticException("Symbol already defined: " + name);
             }
@@ -46,7 +45,6 @@ public class SymbolTable {
         }
     }
 
-    // Resolve Symbol
     public Symbol resolve(String name) {
         Symbol symbol = symbols.get(name);
         if (symbol != null) return symbol;
@@ -54,35 +52,21 @@ public class SymbolTable {
         return null;
     }
 
-    // Resolve Function mit Overload-Resolution
-    public Symbol.FunctionSymbol resolveFunction(String name, List<ast.Type> argTypes, List<Boolean> argRefs) {
+    public Symbol.FunctionSymbol resolveFunction(String name, List<Type> argTypes, List<Boolean> argRefs) {
         List<Symbol.FunctionSymbol> overloads = functions.get(name);
-        if (overloads == null) {
-            if (parent != null) return parent.resolveFunction(name, argTypes, argRefs);
-            return null;
-        }
-
-        // Suche exakten Match
-        for (Symbol.FunctionSymbol func : overloads) {
-            if (matchesSignature(func, argTypes, argRefs)) {
-                return func;
+        if (overloads != null) {
+            Signature sig = new Signature(name, argTypes, argRefs);
+            for (Symbol.FunctionSymbol func : overloads) {
+                if (func.signature().equals(sig)) {
+                    return func;
+                }
             }
         }
 
-        // Kein Match in diesem Scope, prüfe Parent
-        if (parent != null) return parent.resolveFunction(name, argTypes, argRefs);
-        return null;
-    }
-
-    private boolean matchesSignature(Symbol.FunctionSymbol func, List<ast.Type> argTypes, List<Boolean> argRefs) {
-        if (func.parameters().size() != argTypes.size()) return false;
-
-        for (int i = 0; i < argTypes.size(); i++) {
-            ast.Parameter param = func.parameters().get(i);
-            if (!param.type().name().equals(argTypes.get(i).name())) return false;
-            if (param.isReference() != argRefs.get(i)) return false;
+        if (parent != null) {
+            return parent.resolveFunction(name, argTypes, argRefs);
         }
-        return true;
+        return null;
     }
 
     public Map<String, Symbol> getAllSymbols() {

@@ -102,10 +102,8 @@ public class SemanticAnalyzer {
     private void checkFieldNameClashes(Symbol.ClassSymbol cls) throws SemanticException {
         // Prüfe ob Felder und Methoden denselben Namen haben
         for (String fieldName : cls.getAllFields().keySet()) {
-            for (var method : cls.getAllMethods().values()) {
-                if (method.name().equals(fieldName)) {
-                    throw new SemanticException("Name clash: field and method both named '" + fieldName + "'");
-                }
+            if (cls.getAllMethods().containsKey(fieldName)) {
+                throw new SemanticException("Name clash: field and method both named '" + fieldName + "'");
             }
         }
     }
@@ -387,26 +385,17 @@ public class SemanticAnalyzer {
             argRefs.add(isLValue(arg));
         }
 
-        // Funktion suchen (mit Overload-Resolution)
+        // Funktion suchen
         Symbol.FunctionSymbol func = currentScope.resolveFunction(name, argTypes, argRefs);
 
         // Prüfe auch in Klassen-Methoden
         if (func == null && currentClass != null) {
-            // Baue Signatur
-            StringBuilder sig = new StringBuilder(name);
-            sig.append("(");
-            for (int i = 0; i < argTypes.size(); i++) {
-                if (i > 0) sig.append(",");
-                sig.append(argTypes.get(i).name());
-                if (argRefs.get(i)) sig.append("&");
-            }
-            sig.append(")");
-
-            func = currentClass.getMethod(sig.toString());
+            func = currentClass.getMethod(name, argTypes, argRefs);
         }
 
         if (func == null) {
-            throw new SemanticException("Function not found: " + name);
+            throw new SemanticException("Function not found: " + name +
+                " with signature " + new Signature(name, argTypes, argRefs));
         }
 
         return func.returnType();

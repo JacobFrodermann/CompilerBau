@@ -11,6 +11,7 @@ import symbols.SymbolTable;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -64,7 +65,7 @@ public class Main {
                 }
 
                 case Symbol.FunctionSymbol func -> {
-                    System.out.println(indentStr + func.name() + func.signature().substring(func.name().length()) + " -> " + func.returnType().name());
+                    System.out.println(indentStr + func.signature() + " -> " + func.returnType().name());
                 }
 
                 case Symbol.ClassSymbol cls -> {
@@ -83,15 +84,16 @@ public class Main {
                     // Methoden
                     if (!cls.getAllMethods().isEmpty()) {
                         System.out.println(indentStr + "  Methods:");
-                        for (var method : cls.getAllMethods().entrySet()) {
-                            Symbol.FunctionSymbol m = method.getValue();
-                            String virt = cls.isVirtual(m.name()) ? "virtual " : "";
-                            System.out.println(indentStr + "    " + virt + m.returnType().name() + " " + m.signature());
+                        for (var methodEntry : cls.getAllMethods().entrySet()) {
+                            List<Symbol.FunctionSymbol> overloads = methodEntry.getValue();
+                            for (Symbol.FunctionSymbol m : overloads) {
+                                String virt = cls.isVirtual(m.name()) ? "virtual " : "";
+                                System.out.println(indentStr + "    " + virt + m.returnType().name() + " " + m.signature());
+                            }
                         }
                     }
                 }
             }
         }
     }
-
 }
