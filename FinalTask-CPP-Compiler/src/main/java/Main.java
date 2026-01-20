@@ -1,3 +1,4 @@
+import analysis.SemanticAnalyzer;
 import analysis.SymbolCollector;
 import ast.ASTPrinter;
 import ast.ProgramNode;
@@ -36,6 +37,11 @@ public class Main {
 
             System.out.println("Collected symbols:");
             printSymbols(symbols, 1);
+
+            // Pass 2: Semantische Analyse
+            SemanticAnalyzer analyzer = new SemanticAnalyzer(symbols);
+            analyzer.analyze(ast);
+            System.out.println("Semantic analysis passed");
 
         } catch (IOException e) {
             System.err.println("Fehler beim Lesen der Datei: " + e.getMessage());
