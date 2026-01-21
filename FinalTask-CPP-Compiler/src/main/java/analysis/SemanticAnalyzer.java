@@ -481,7 +481,30 @@ public class SemanticAnalyzer {
     return expr instanceof Expression.Variable || expr instanceof Expression.MemberAccess;
   }
 
-  public static boolean typesMatch(Type t1, Type t2) {
-    return t1.name().equals(t2.name());
+  public boolean typesMatch(Type expected, Type actual) {
+    // Exakt gleich
+    if (expected.name().equals(actual.name())) {
+      return true;
+    }
+
+    // Prüfe ob actual eine Subklasse von expected ist
+    Symbol actualSymbol = globalSymbols.resolve(actual.name());
+    if (actualSymbol instanceof Symbol.ClassSymbol actualClass) {
+      String baseName = actualClass.baseClassName();
+      while (baseName != null) {
+        if (baseName.equals(expected.name())) {
+          return true;
+        }
+        // Weiter in der Vererbungskette
+        Symbol baseSymbol = globalSymbols.resolve(baseName);
+        if (baseSymbol instanceof Symbol.ClassSymbol baseClass) {
+          baseName = baseClass.baseClassName();
+        } else {
+          break;
+        }
+      }
+    }
+
+    return false;
   }
 }
