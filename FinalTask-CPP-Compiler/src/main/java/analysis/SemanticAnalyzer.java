@@ -451,6 +451,17 @@ public class SemanticAnalyzer {
             func = currentClass.getMethod(name, argTypes, argRefs);
         }
 
+        // Prüfe ob es ein Konstruktor-Aufruf ist (name ist Klassenname)
+        if (func == null) {
+            Symbol classSymbol = globalSymbols.resolve(name);
+            if (classSymbol instanceof Symbol.ClassSymbol cls) {
+                func = cls.getConstructor(argTypes, argRefs);
+                if (func != null) {
+                    return new Type(name); // Konstruktor gibt Objekt vom Klassentyp zurück
+                }
+            }
+        }
+
         if (func == null) {
             throw new SemanticException("Function not found: " + name +
                 " with signature " + new Signature(name, argTypes, argRefs));

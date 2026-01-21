@@ -216,6 +216,14 @@ public class Executor {
             return null;
         }
 
+        // Prüfe ob es ein Konstruktor-Aufruf ist (name ist Klassenname)
+        Symbol symbol = globalSymbols.resolve(name);
+        if (symbol instanceof Symbol.ClassSymbol cls) {
+            ObjectInstance obj = new ObjectInstance(cls);
+            executeConstructor(obj, argValues);
+            return obj;
+        }
+
         // User-defined Funktion
         Declaration.FunctionDef func = findFunction(name);
         if (func == null) {

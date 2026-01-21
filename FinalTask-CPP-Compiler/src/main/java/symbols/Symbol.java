@@ -207,5 +207,14 @@ public sealed interface Symbol {
 
         public Map<String, VariableSymbol> getAllFields() { return fields; }
         public Map<String, List<FunctionSymbol>> getAllMethods() { return methods; }
+
+        public FunctionSymbol getConstructor(List<Type> argTypes, List<Boolean> argIsLValue) {
+            for (FunctionSymbol ctor : constructors.values()) {
+                if (matchesCall(ctor, argTypes, argIsLValue)) {
+                    return ctor;
+                }
+            }
+            return null;
+        }
     }
 }
