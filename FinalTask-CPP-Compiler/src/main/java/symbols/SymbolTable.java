@@ -1,22 +1,22 @@
 package symbols;
 
-import java.util.*;
-
 import ast.Parameter;
 import ast.Type;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SymbolTable {
     private final Map<String, Symbol> symbols = new HashMap<>();
     private final Map<String, List<Symbol.FunctionSymbol>> functions = new HashMap<>();
     private final SymbolTable parent;
     private final String scopeName;
-    private int blocks = 0;
 
-    public SymbolTable(String scopeName) {
-        this(scopeName, null);
-    }
+    private static int blockCounter = 0;
 
-    public final List<Symbol.FunctionSymbol> primitives = List.of(
+    // Built-in Funktionen
+    private static final List<Symbol.FunctionSymbol> PRIMITIVES = List.of(
         new Symbol.FunctionSymbol(
             "print_bool",
             new Type("void"),
@@ -30,16 +30,12 @@ public class SymbolTable {
         new Symbol.FunctionSymbol(
             "print_string",
             new Type("void"),
-            List.of(
-                new Parameter(new Type("string"), true, "value")
-            )
+            List.of(new Parameter(new Type("string"), false, "value"))
         ),
         new Symbol.FunctionSymbol(
             "print_string",
             new Type("void"),
-            List.of(
-                new Parameter(new Type("string"), false, "value")
-            )
+            List.of(new Parameter(new Type("string"), true, "value"))
         ),
         new Symbol.FunctionSymbol(
             "print_char",
@@ -48,28 +44,26 @@ public class SymbolTable {
         )
     );
 
-    private void registerPrimitives() {
-        for (Symbol.FunctionSymbol prim : primitives) {
-            if (functions.get(prim.name) == null) {
-                functions.put(prim.name, Arrays.asList(prim));
-            } else {
-                ArrayList<Symbol.FunctionSymbol> list = new ArrayList<>(functions.get(prim.name));
-                list.add(prim);
-                functions.put(prim.name, list);
-            }
-        }
+    public SymbolTable(String scopeName) {
+        this(scopeName, null);
     }
 
     public SymbolTable(String scopeName, SymbolTable parent) {
         this.scopeName = scopeName;
         this.parent = parent;
 
-        registerPrimitives();
+        // Primitives nur im globalen Scope registrieren
+        if (parent == null) {
+            registerPrimitives();
+        }
     }
 
-    public SymbolTable block() {
-        blocks ++;
-        return new SymbolTable("block" + blocks, this);
+    private void registerPrimitives() {
+        for (Symbol.FunctionSymbol prim : PRIMITIVES) {
+            List<Symbol.FunctionSymbol> overloads = functions.computeIfAbsent(prim.name(), k -> new ArrayList<>());
+            overloads.add(prim);
+            symbols.put(prim.name(), prim);
+        }
     }
 
     public void define(Symbol symbol) throws SemanticException {
@@ -120,10 +114,20 @@ public class SymbolTable {
         return null;
     }
 
+    public SymbolTable block() {
+        blockCounter++;
+        return new SymbolTable("block" + blockCounter, this);
+    }
+
     public Map<String, Symbol> getAllSymbols() {
         return symbols;
     }
 
-    public SymbolTable getParent() { return parent; }
-    public String getScopeName() { return scopeName; }
+    public SymbolTable getParent() {
+        return parent;
+    }
+
+    public String getScopeName() {
+        return scopeName;
+    }
 }
