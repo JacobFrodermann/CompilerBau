@@ -463,6 +463,13 @@ public class SemanticAnalyzer {
         if (func != null) {
           return new Type(name); // Konstruktor gibt Objekt vom Klassentyp zurück
         }
+
+        // Support für implicit copy constructor: C(C) or C(C&)
+        // wenn kein constructor found, but we are calling the class
+        // with exactly 1 argument of the same Type as the Class, allow it.
+        if (argTypes.size() == 1 && argTypes.get(0).name().equals(name)) {
+          return new Type(name);
+        }
       }
     }
 
@@ -500,7 +507,7 @@ public class SemanticAnalyzer {
         if (baseSymbol instanceof Symbol.ClassSymbol baseClass) {
           baseName = baseClass.baseClassName();
         } else {
-          break;
+          baseName = null;
         }
       }
     }
