@@ -118,23 +118,23 @@ public class ASTPrinter {
         }
         indent--;
       }
-        case Statement.MethodCall m -> {
-            line("MethodCall: " + m.methodName());
-            indent++;
-            line("Object:");
-            indent++;
-            printNode(m.object());
-            indent--;
-            if (!m.arguments().isEmpty()) {
-                line("Arguments:");
-                indent++;
-                for (var arg : m.arguments()) {
-                    printNode(arg);
-                }
-                indent--;
-            }
-            indent--;
+      case Statement.MethodCall m -> {
+        line("MethodCall: " + m.methodName());
+        indent++;
+        line("Object:");
+        indent++;
+        printNode(m.object());
+        indent--;
+        if (!m.arguments().isEmpty()) {
+          line("Arguments:");
+          indent++;
+          for (var arg : m.arguments()) {
+            printNode(arg);
+          }
+          indent--;
         }
+        indent--;
+      }
       case Statement.VarDecl v -> {
         String ref = v.isReference() ? "&" : "";
         line("VarDecl: " + v.type().name() + ref + " " + v.name());
@@ -218,64 +218,65 @@ public class ASTPrinter {
     }
   }
 
-    private void printExpression(Expression e) {
-        switch (e) {
-            case Expression.IntLiteral i -> line("Int: " + i.value());
-            case Expression.BoolLiteral b -> line("Bool: " + b.value());
-            case Expression.StringLiteral s -> line("String: \"" + s.value() + "\"");
-            case Expression.Variable v -> line("Var: " + v.name());
-            case Expression.MemberAccess m -> {
-                line("MemberAccess: ." + m.memberName());
-                indent++;
-                printNode(m.object());
-                indent--;
-            }
-            case Expression.FunctionCall f -> {
-                line("FunctionCall: " + f.functionName());
-                if (!f.arguments().isEmpty()) {
-                    indent++;
-                    line("Arguments:");
-                    indent++;
-                    for (var arg : f.arguments()) {
-                        printNode(arg);
-                    }
-                    indent--;
-                    indent--;
-                }
-            }
-            case Expression.MethodCall m -> {  // ← NEU!
-                line("MethodCall: " + m.methodName());
-                indent++;
-                line("Object:");
-                indent++;
-                printNode(m.object());
-                indent--;
-                if (!m.arguments().isEmpty()) {
-                    line("Arguments:");
-                    indent++;
-                    for (var arg : m.arguments()) {
-                        printNode(arg);
-                    }
-                    indent--;
-                }
-                indent--;
-            }
-            case Expression.BinaryOp b -> {
-                line("BinaryOp: " + b.operator());
-                indent++;
-                printNode(b.left());
-                printNode(b.right());
-                indent--;
-            }
-            case Expression.UnaryOp u -> {
-                line("UnaryOp: " + u.operator());
-                indent++;
-                printNode(u.operand());
-                indent--;
-            }
-            default -> {}
+  private void printExpression(Expression e) {
+    switch (e) {
+      case Expression.IntLiteral i -> line("Int: " + i.value());
+      case Expression.BoolLiteral b -> line("Bool: " + b.value());
+      case Expression.CharLiteral c -> line("Char: '" + c.value() + "'");
+      case Expression.StringLiteral s -> line("String: \"" + s.value() + "\"");
+      case Expression.Variable v -> line("Var: " + v.name());
+      case Expression.MemberAccess m -> {
+        line("MemberAccess: ." + m.memberName());
+        indent++;
+        printNode(m.object());
+        indent--;
+      }
+      case Expression.FunctionCall f -> {
+        line("FunctionCall: " + f.functionName());
+        if (!f.arguments().isEmpty()) {
+          indent++;
+          line("Arguments:");
+          indent++;
+          for (var arg : f.arguments()) {
+            printNode(arg);
+          }
+          indent--;
+          indent--;
         }
+      }
+      case Expression.MethodCall m -> { // ← NEU!
+        line("MethodCall: " + m.methodName());
+        indent++;
+        line("Object:");
+        indent++;
+        printNode(m.object());
+        indent--;
+        if (!m.arguments().isEmpty()) {
+          line("Arguments:");
+          indent++;
+          for (var arg : m.arguments()) {
+            printNode(arg);
+          }
+          indent--;
+        }
+        indent--;
+      }
+      case Expression.BinaryOp b -> {
+        line("BinaryOp: " + b.operator());
+        indent++;
+        printNode(b.left());
+        printNode(b.right());
+        indent--;
+      }
+      case Expression.UnaryOp u -> {
+        line("UnaryOp: " + u.operator());
+        indent++;
+        printNode(u.operand());
+        indent--;
+      }
+      default -> {}
     }
+  }
 
   private void printClassMember(ClassMember m) {
     switch (m) {

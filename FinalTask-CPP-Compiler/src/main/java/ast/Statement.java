@@ -15,7 +15,9 @@ public sealed interface Statement extends ASTNode {
       implements Statement {} // target ist LValue: Variable oder MemberAccess
 
   record FunctionCall(String functionName, List<Expression> arguments) implements Statement {}
-    record MethodCall(Expression object, String methodName, List<Expression> arguments) implements Statement {}
+
+  record MethodCall(Expression object, String methodName, List<Expression> arguments)
+      implements Statement {}
 
   record If(Expression condition, Statement thenBranch, Statement elseBranch)
       implements Statement {} // elseBranch null wenn kein else

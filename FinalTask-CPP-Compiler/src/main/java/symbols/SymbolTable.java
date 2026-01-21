@@ -2,157 +2,157 @@ package symbols;
 
 import ast.Parameter;
 import ast.Type;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SymbolTable {
-    private final Map<String, Symbol> symbols = new HashMap<>();
-    private final Map<String, List<Symbol.FunctionSymbol>> functions = new HashMap<>();
-    private final SymbolTable parent;
-    private final String scopeName;
+  private final Map<String, Symbol> symbols = new HashMap<>();
+  private final Map<String, List<Symbol.FunctionSymbol>> functions = new HashMap<>();
+  private final SymbolTable parent;
+  private final String scopeName;
 
-    private static int blockCounter = 0;
+  private static int blockCounter = 0;
 
-    // Built-in Funktionen
-    private static final List<Symbol.FunctionSymbol> PRIMITIVES = List.of(
-        new Symbol.FunctionSymbol(
-            "print_bool",
-            new Type("void"),
-            List.of(new Parameter(new Type("bool"), false, "value"))
-        ),
-        new Symbol.FunctionSymbol(
-            "print_int",
-            new Type("void"),
-            List.of(new Parameter(new Type("int"), false, "value"))
-        ),
-        new Symbol.FunctionSymbol(
-            "print_string",
-            new Type("void"),
-            List.of(new Parameter(new Type("string"), false, "value"))
-        ),
-        new Symbol.FunctionSymbol(
-            "print_string",
-            new Type("void"),
-            List.of(new Parameter(new Type("string"), true, "value"))
-        ),
-        new Symbol.FunctionSymbol(
-            "print_char",
-            new Type("void"),
-            List.of(new Parameter(new Type("char"), false, "value"))
-        )
-    );
+  // Built-in Funktionen
+  private static final List<Symbol.FunctionSymbol> PRIMITIVES =
+      List.of(
+          new Symbol.FunctionSymbol(
+              "print_bool",
+              new Type("void"),
+              List.of(new Parameter(new Type("bool"), false, "value"))),
+          new Symbol.FunctionSymbol(
+              "print_int",
+              new Type("void"),
+              List.of(new Parameter(new Type("int"), false, "value"))),
+          new Symbol.FunctionSymbol(
+              "print_string",
+              new Type("void"),
+              List.of(new Parameter(new Type("string"), false, "value"))),
+          new Symbol.FunctionSymbol(
+              "print_string",
+              new Type("void"),
+              List.of(new Parameter(new Type("string"), true, "value"))),
+          new Symbol.FunctionSymbol(
+              "print_char",
+              new Type("void"),
+              List.of(new Parameter(new Type("char"), false, "value"))));
 
-    public SymbolTable(String scopeName) {
-        this(scopeName, null);
+  public SymbolTable(String scopeName) {
+    this(scopeName, null);
+  }
+
+  public SymbolTable(String scopeName, SymbolTable parent) {
+    this.scopeName = scopeName;
+    this.parent = parent;
+
+    // Primitives nur im globalen Scope registrieren
+    if (parent == null) {
+      registerPrimitives();
     }
+  }
 
-    public SymbolTable(String scopeName, SymbolTable parent) {
-        this.scopeName = scopeName;
-        this.parent = parent;
+  private void registerPrimitives() {
+    for (Symbol.FunctionSymbol prim : PRIMITIVES) {
+      List<Symbol.FunctionSymbol> overloads =
+          functions.computeIfAbsent(prim.name(), k -> new ArrayList<>());
+      overloads.add(prim);
+      symbols.put(prim.name(), prim);
+    }
+  }
 
-        // Primitives nur im globalen Scope registrieren
-        if (parent == null) {
-            registerPrimitives();
+  public void define(Symbol symbol) throws SemanticException {
+    String name = symbol.name();
+
+    if (symbol instanceof Symbol.FunctionSymbol func) {
+      List<Symbol.FunctionSymbol> overloads =
+          functions.computeIfAbsent(name, k -> new ArrayList<>());
+
+      // Prüfe auf doppelte Signatur
+      Signature newSig = func.signature();
+      for (Symbol.FunctionSymbol existing : overloads) {
+        if (existing.signature().equals(newSig)) {
+          throw new SemanticException("Function already defined: " + newSig);
         }
-    }
+      }
+      overloads.add(func);
+      symbols.put(name, func);
 
-    private void registerPrimitives() {
-        for (Symbol.FunctionSymbol prim : PRIMITIVES) {
-            List<Symbol.FunctionSymbol> overloads = functions.computeIfAbsent(prim.name(), k -> new ArrayList<>());
-            overloads.add(prim);
-            symbols.put(prim.name(), prim);
+    } else {
+      if (symbols.containsKey(name)) {
+        throw new SemanticException("Symbol already defined: " + name);
+      }
+      symbols.put(name, symbol);
+    }
+  }
+
+  public Symbol resolve(String name) {
+    Symbol symbol = symbols.get(name);
+    if (symbol != null) return symbol;
+    if (parent != null) return parent.resolve(name);
+    return null;
+  }
+
+  public Symbol.FunctionSymbol resolveFunction(
+      String name, List<Type> argTypes, List<Boolean> argIsLValue) {
+    List<Symbol.FunctionSymbol> overloads = functions.get(name);
+    if (overloads != null) {
+      for (Symbol.FunctionSymbol func : overloads) {
+        if (matchesCall(func, argTypes, argIsLValue)) {
+          return func;
         }
+      }
     }
 
-    public void define(Symbol symbol) throws SemanticException {
-        String name = symbol.name();
+    if (parent != null) {
+      return parent.resolveFunction(name, argTypes, argIsLValue);
+    }
+    return null;
+  }
 
-        if (symbol instanceof Symbol.FunctionSymbol func) {
-            List<Symbol.FunctionSymbol> overloads = functions.computeIfAbsent(name, k -> new ArrayList<>());
-
-            // Prüfe auf doppelte Signatur
-            Signature newSig = func.signature();
-            for (Symbol.FunctionSymbol existing : overloads) {
-                if (existing.signature().equals(newSig)) {
-                    throw new SemanticException("Function already defined: " + newSig);
-                }
-            }
-            overloads.add(func);
-            symbols.put(name, func);
-
-        } else {
-            if (symbols.containsKey(name)) {
-                throw new SemanticException("Symbol already defined: " + name);
-            }
-            symbols.put(name, symbol);
-        }
+  private boolean matchesCall(
+      Symbol.FunctionSymbol func, List<Type> argTypes, List<Boolean> argIsLValue) {
+    if (func.parameters.size() != argTypes.size()) {
+      return false;
     }
 
-    public Symbol resolve(String name) {
-        Symbol symbol = symbols.get(name);
-        if (symbol != null) return symbol;
-        if (parent != null) return parent.resolve(name);
-        return null;
+    for (int i = 0; i < func.parameters.size(); i++) {
+      Parameter param = func.parameters.get(i);
+      Type argType = argTypes.get(i);
+      boolean isLVal = argIsLValue.get(i);
+
+      // Typ-Check
+      if (!param.type().name().equals(argType.name())) {
+        return false;
+      }
+
+      // Referenz-Check:
+      // params MIT & braucht LValue ........... wäh weil wir ja eine reference erwarten
+      // params OHNE & akzeptiert beides (LValue wird kopiert, RValue direkt verwendet) ... ich
+      // hoffe ich habe das richtig verstanden, bin bissl verwirrt
+      if (param.isReference() && !isLVal) {
+        return false;
+      }
     }
 
-    public Symbol.FunctionSymbol resolveFunction(String name, List<Type> argTypes, List<Boolean> argIsLValue) {
-        List<Symbol.FunctionSymbol> overloads = functions.get(name);
-        if (overloads != null) {
-            for (Symbol.FunctionSymbol func : overloads) {
-                if (matchesCall(func, argTypes, argIsLValue)) {
-                    return func;
-                }
-            }
-        }
+    return true;
+  }
 
-        if (parent != null) {
-            return parent.resolveFunction(name, argTypes, argIsLValue);
-        }
-        return null;
-    }
+  public SymbolTable block() {
+    blockCounter++;
+    return new SymbolTable("block" + blockCounter, this);
+  }
 
-    private boolean matchesCall(Symbol.FunctionSymbol func, List<Type> argTypes, List<Boolean> argIsLValue) {
-        if (func.parameters.size() != argTypes.size()) {
-            return false;
-        }
+  public Map<String, Symbol> getAllSymbols() {
+    return symbols;
+  }
 
-        for (int i = 0; i < func.parameters.size(); i++) {
-            Parameter param = func.parameters.get(i);
-            Type argType = argTypes.get(i);
-            boolean isLVal = argIsLValue.get(i);
+  public SymbolTable getParent() {
+    return parent;
+  }
 
-            // Typ-Check
-            if (!param.type().name().equals(argType.name())) {
-                return false;
-            }
-
-            // Referenz-Check:
-            // params MIT & braucht LValue ........... wäh weil wir ja eine reference erwarten
-            // params OHNE & akzeptiert beides (LValue wird kopiert, RValue direkt verwendet) ... ich hoffe ich habe das richtig verstanden, bin bissl verwirrt
-            if (param.isReference() && !isLVal) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public SymbolTable block() {
-        blockCounter++;
-        return new SymbolTable("block" + blockCounter, this);
-    }
-
-    public Map<String, Symbol> getAllSymbols() {
-        return symbols;
-    }
-
-    public SymbolTable getParent() {
-        return parent;
-    }
-
-    public String getScopeName() {
-        return scopeName;
-    }
+  public String getScopeName() {
+    return scopeName;
+  }
 }

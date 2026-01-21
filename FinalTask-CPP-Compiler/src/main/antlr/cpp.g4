@@ -56,7 +56,7 @@ memberAccess: OBJ_NAME '.' OBJ_NAME;
 
 // literals
 
-literal: STRING_LITERAL | intLiteral | boolLiteral;
+literal: STRING_LITERAL | CHAR_LITERAL | intLiteral | boolLiteral;
 
 intLiteral: NUM;
 
@@ -85,6 +85,7 @@ BLOCK_COMMENT: '/*' .*? '*/' -> skip;
 PREPROCESSOR: '#' ~[\r\n]* -> skip;
 
 STRING_LITERAL: '"' (~["\\\r\n] | '\\' .)* '"';
+CHAR_LITERAL: '\'' (~['\\\r\n] | '\\' .) '\'';
 NUM: [0-9]+;
 OBJ_NAME: [a-zA-Z][a-zA-Z0-9_]*;
 WS: [ \t\r\n]+ -> skip;
