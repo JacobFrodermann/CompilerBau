@@ -1,9 +1,8 @@
 package symbols;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import ast.Parameter;
 import ast.Type;
 
 public class SymbolTable {
@@ -11,14 +10,66 @@ public class SymbolTable {
     private final Map<String, List<Symbol.FunctionSymbol>> functions = new HashMap<>();
     private final SymbolTable parent;
     private final String scopeName;
+    private int blocks = 0;
 
     public SymbolTable(String scopeName) {
         this(scopeName, null);
     }
 
+    public final List<Symbol.FunctionSymbol> primitives = List.of(
+        new Symbol.FunctionSymbol(
+            "print_bool",
+            new Type("void"),
+            List.of(new Parameter(new Type("bool"), false, "value"))
+        ),
+        new Symbol.FunctionSymbol(
+            "print_int",
+            new Type("void"),
+            List.of(new Parameter(new Type("int"), false, "value"))
+        ),
+        new Symbol.FunctionSymbol(
+            "print_string",
+            new Type("void"),
+            List.of(
+                new Parameter(new Type("string"), true, "value")
+            )
+        ),
+        new Symbol.FunctionSymbol(
+            "print_string",
+            new Type("void"),
+            List.of(
+                new Parameter(new Type("string"), false, "value")
+            )
+        ),
+        new Symbol.FunctionSymbol(
+            "print_char",
+            new Type("void"),
+            List.of(new Parameter(new Type("char"), false, "value"))
+        )
+    );
+
+    private void registerPrimitives() {
+        for (Symbol.FunctionSymbol prim : primitives) {
+            if (functions.get(prim.name) == null) {
+                functions.put(prim.name, Arrays.asList(prim));
+            } else {
+                ArrayList<Symbol.FunctionSymbol> list = new ArrayList<>(functions.get(prim.name));
+                list.add(prim);
+                functions.put(prim.name, list);
+            }
+        }
+    }
+
     public SymbolTable(String scopeName, SymbolTable parent) {
         this.scopeName = scopeName;
         this.parent = parent;
+
+        registerPrimitives();
+    }
+
+    public SymbolTable block() {
+        blocks ++;
+        return new SymbolTable("block" + blocks, this);
     }
 
     public void define(Symbol symbol) throws SemanticException {

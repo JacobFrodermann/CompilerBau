@@ -28,7 +28,8 @@ public class SymbolCollector {
                 Symbol.FunctionSymbol symbol = new Symbol.FunctionSymbol(
                     func.name(),
                     func.returnType(),
-                    func.parameters()
+                    func.parameters(),
+                    func.body()
                 );
                 globalSymbols.define(symbol);
             }
@@ -60,7 +61,8 @@ public class SymbolCollector {
                     Symbol.FunctionSymbol ctorSymbol = new Symbol.FunctionSymbol(
                         ctor.name(),
                         new Type(cls.name()),  // Rückgabetyp = Klassentyp
-                        ctor.parameters()
+                        ctor.parameters(),
+                        ctor.body()
                     );
                     classSymbol.addConstructor(ctorSymbol);
                 }
@@ -70,7 +72,8 @@ public class SymbolCollector {
                     Symbol.FunctionSymbol methodSymbol = new Symbol.FunctionSymbol(
                         method.name(),
                         method.returnType(),
-                        method.parameters()
+                        method.parameters(),
+                        method.body()
                     );
                     classSymbol.addMethod(method.name(), methodSymbol, method.isVirtual());
                 }

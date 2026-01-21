@@ -2,6 +2,7 @@ import analysis.SemanticAnalyzer;
 import analysis.SymbolCollector;
 import ast.ASTPrinter;
 import ast.ProgramNode;
+import execution.Executor;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -44,6 +45,10 @@ public class Main {
             analyzer.analyze(ast);
             System.out.println("Semantic analysis passed");
 
+            // Pass 3: Execution
+            IO.println("Execution:");
+            Executor executor = new Executor(symbols);
+            executor.execute(ast);
         } catch (IOException e) {
             System.err.println("Fehler beim Lesen der Datei: " + e.getMessage());
         } catch (SemanticException e) {

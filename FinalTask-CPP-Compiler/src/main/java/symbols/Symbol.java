@@ -1,6 +1,8 @@
 package symbols;
 
+import ast.Declaration;
 import ast.Parameter;
+import ast.Statement;
 import ast.Type;
 import java.util.List;
 import java.util.Map;
@@ -11,15 +13,73 @@ import java.util.stream.Collectors;
 public sealed interface Symbol {
     String name();
 
+    Object getValue();
+    void storeValue(Object val);
+
     // Variable Symbol
-    record VariableSymbol(String name, Type type, boolean isReference) implements Symbol {}
+    final class VariableSymbol implements Symbol {
+        public String name;
+        public Type type;
+        public  boolean isReference;
+        private Object value;
+
+        public VariableSymbol(String name, Type type, boolean reference) {
+           this.name = name;
+           this.type = type;
+           this.isReference = reference;
+        }
+
+        public  VariableSymbol(Statement.VarDecl decl) {
+            name = decl.name();
+            type = decl.type();
+            isReference = decl.isReference();
+        }
+        public  VariableSymbol(Parameter p) {
+            name = p.name();
+            type = p.type();
+            isReference = p.isReference();
+        }
+
+        public VariableSymbol(Statement.VarDef decl) {
+            name = decl.name();
+            type = decl.type();
+            isReference = decl.isReference();
+        }
+
+        @Override
+        public String name() { return name; }
+
+        @Override
+        public Object getValue() { return value; }
+
+        @Override
+        public void storeValue(Object val) { value = val; }
+
+        public Type type() { return  type; }
+
+        public boolean isReference() { return  isReference; }
+    }
 
     // Function Symbol
-    record FunctionSymbol(
-        String name,
-        Type returnType,
-        List<Parameter> parameters
-    ) implements Symbol {
+    public final class FunctionSymbol implements Symbol {
+        public String name;
+        public Type returnType;
+        public List<Parameter> parameters;
+        public Object value;
+        public Statement.Block block;
+
+        public FunctionSymbol(String name, Type returnType, List<Parameter> parameters) {
+            this.name = name;
+            this.returnType = returnType;
+            this.parameters = parameters;
+        }
+
+        public FunctionSymbol(String name, Type returnType, List<Parameter> parameters, Statement.Block block) {
+            this.name = name;
+            this.returnType = returnType;
+            this.parameters = parameters;
+            this.block = block;
+        }
 
         public Signature signature() {
             List<Type> types = parameters.stream()
@@ -30,6 +90,17 @@ public sealed interface Symbol {
                 .collect(Collectors.toList());
             return new Signature(name, types, refs);
         }
+
+        @Override
+        public String name() { return name; }
+
+        @Override
+        public Object getValue() { return value; }
+
+        @Override
+        public void storeValue(Object val) { value = val; }
+
+        public Type returnType() { return  returnType; }
     }
 
     // Class Symbol
@@ -37,6 +108,7 @@ public sealed interface Symbol {
         private final String name;
         private final String baseClassName;
         private ClassSymbol baseClass;
+        Object value;
 
         private final Map<String, VariableSymbol> fields = new HashMap<>();
         private final Map<Signature, FunctionSymbol> constructors = new HashMap<>();
@@ -48,8 +120,11 @@ public sealed interface Symbol {
             this.baseClassName = baseClassName;
         }
 
-        @Override
         public String name() { return name; }
+
+        public Object getValue() { return value; }
+
+        public void storeValue(Object val) { value = val; }
 
         public String baseClassName() { return baseClassName; }
         public ClassSymbol baseClass() { return baseClass; }

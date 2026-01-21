@@ -3,13 +3,16 @@ package ast;
 import java.util.List;
 
 public sealed interface Expression extends ASTNode {
+    public non-sealed interface Literal<t> extends Expression {
+        t value();
+    }
 
   // Literals
-  record IntLiteral(int value) implements Expression {}
+  record IntLiteral(Integer value) implements Literal<Integer> {}
 
-  record BoolLiteral(boolean value) implements Expression {}
+  record BoolLiteral(Boolean value) implements Literal<Boolean> {}
 
-  record StringLiteral(String value) implements Expression {}
+  record StringLiteral(String value) implements Literal<String> {}
 
   // Variables & Access
   record Variable(String name) implements Expression {}

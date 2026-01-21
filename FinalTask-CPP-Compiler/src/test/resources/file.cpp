@@ -1,3 +1,4 @@
+/*
 int add(int a, int b) {
     return a + b;
 }
@@ -42,8 +43,13 @@ public:
         return x + y + z;
     }
 };
+*/
+int get(int i) {
+return i;
+}
 
 int main() {
+/*
     int result = add(5, 10);
     int result2 = add(1, 2, 3);
 
@@ -56,7 +62,17 @@ int main() {
 
     while (result > 0) {
         result = result - 1;
+    }*/
+
+    int h = get(3);
+    int w = 2;
+
+    if (3 > 2) {
+        print_string("3 > 2");
     }
 
-    return 0;
+    print_int(h * w);
+
+
+    //return 0;
 }

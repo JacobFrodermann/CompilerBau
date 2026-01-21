@@ -68,7 +68,7 @@ math: multiplicative (('+' | '-') multiplicative)*;
 
 multiplicative: unary (('*' | '/' | '%') unary)*;
 
-unary: ('+' | '-' | '!')? primary;
+unary: ('-' | '!')? primary;
 
 primary: (functionCallExpr | literal | OBJ_NAME | memberAccess | '(' value ')');
 

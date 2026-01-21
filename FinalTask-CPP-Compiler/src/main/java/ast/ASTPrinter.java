@@ -256,6 +256,7 @@ public class ASTPrinter {
                 printNode(u.operand());
                 indent--;
             }
+            default -> {}
         }
     }
 

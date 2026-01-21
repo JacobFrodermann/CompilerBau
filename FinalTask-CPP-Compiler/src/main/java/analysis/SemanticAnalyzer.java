@@ -161,7 +161,7 @@ public class SemanticAnalyzer {
         switch (stmt) {
             case Statement.Block block -> {
                 // Neuer Scope für Block
-                SymbolTable blockScope = new SymbolTable("block", currentScope);
+                SymbolTable blockScope = currentScope.block();
                 SymbolTable oldScope = currentScope;
                 currentScope = blockScope;
 
@@ -349,10 +349,18 @@ public class SemanticAnalyzer {
 
                 String op = binOp.operator();
 
+
+                if (op.equals("+")) {
+                    if (!((leftType.name().equals("int") && rightType.name().equals("int")) || (leftType.name().equals("string") && !rightType.name().equals("string")))) {
+                        throw new SemanticException("Arithmetic operators require int operands3 got " + leftType.name() + " and " + rightType.name());
+                    }
+                    yield leftType;
+                }
+
                 // Arithmetik: int only
-                if (op.matches("[+\\-*/%]")) {
+                if (op.matches("[\\-*/%]")) {
                     if (!leftType.name().equals("int") || !rightType.name().equals("int")) {
-                        throw new SemanticException("Arithmetic operators require int operands");
+                        throw new SemanticException("Arithmetic operators require int operands4");
                     }
                     yield new Type("int");
                 }
@@ -396,6 +404,8 @@ public class SemanticAnalyzer {
 
                 throw new SemanticException("Unknown unary operator: " + op);
             }
+
+            default -> {throw new SemanticException("shouldnt happen");}
         };
     }
 
@@ -426,11 +436,11 @@ public class SemanticAnalyzer {
         return func.returnType();
     }
 
-    private boolean isLValue(Expression expr) {
+    public static boolean isLValue(Expression expr) {
         return expr instanceof Expression.Variable || expr instanceof Expression.MemberAccess;
     }
 
-    private boolean typesMatch(Type t1, Type t2) {
+    public static boolean typesMatch(Type t1, Type t2) {
         return t1.name().equals(t2.name());
     }
 }
