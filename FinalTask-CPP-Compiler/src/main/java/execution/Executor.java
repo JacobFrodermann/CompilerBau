@@ -1,9 +1,6 @@
 package execution;
 
-import analysis.SemanticAnalyzer;
 import ast.*;
-import symbols.SemanticException;
-import symbols.Signature;
 import symbols.Symbol;
 import symbols.SymbolTable;
 
@@ -12,20 +9,28 @@ import java.util.List;
 
 public class Executor {
     private final SymbolTable globalSymbols;
-    private SymbolTable currentScope;
-    private Symbol.ClassSymbol currentClass;
-    private ProgramNode topLevel;
-    Type currentFunctionReturnType;
+    private Environment currentEnv;
+    private ProgramNode program;
+    private ObjectInstance currentObject;
 
     public Executor(SymbolTable globalSymbols) {
         this.globalSymbols = globalSymbols;
-        this.currentScope = globalSymbols;
+        this.currentEnv = new Environment(null);
     }
 
-    public Declaration.FunctionDef getMain(ProgramNode node) {
-        for (Declaration d : node.declarations()) {
-            if (d instanceof Declaration.FunctionDef f) {
-                if (f.name().equals("main") && (f.returnType().name().equals("void") || f.returnType().name().equals("int"))) {
+    public void execute(ProgramNode program) {
+        this.program = program;
+        Declaration.FunctionDef main = findMain();
+        if (main == null) {
+            throw new RuntimeException("No main() function found");
+        }
+        executeFunction(main, List.of());
+    }
+
+    private Declaration.FunctionDef findMain() {
+        for (Declaration decl : program.declarations()) {
+            if (decl instanceof Declaration.FunctionDef f) {
+                if (f.name().equals("main")) {
                     return f;
                 }
             }
@@ -33,412 +38,472 @@ public class Executor {
         return null;
     }
 
-    boolean handlePrimitive(Symbol.FunctionSymbol func, List<Expression> arguments) throws SemanticException {
-        if (!func.returnType().name().equals("void")) return false;
-       for (Symbol.FunctionSymbol prim : globalSymbols.primitives) {
-           //IO.println(func.signature() + " == " + prim.signature());
-           //IO.println(func.signature().hashCode() + " == " + prim.signature().hashCode());
-           if (func.signature().equals(prim.signature())) {
-                IO.println(executeExpression(arguments.getFirst()));
-                return true;
-            }
-       }
-        return false;
-    }
-
-    Object executeFunc(Symbol.FunctionSymbol func, List<Expression> arguments) throws SemanticException {
-        if (func.block == null) throw new SemanticException("Function without definition was called");
-        return  executeFunc(new Declaration.FunctionDef(func.returnType, func.name, func.parameters, func.block), arguments);
-    }
-    Object executeFunc(Declaration.FunctionDef func, List<Expression> arguments) throws SemanticException {
-        currentFunctionReturnType= func.returnType();
-        SymbolTable callerScope = currentScope;
-        currentScope = new SymbolTable(func.name(), callerScope);
-
-        for (int i = 0; i < func.parameters().size(); i ++) {
-            Symbol.VariableSymbol paramSymbol = new Symbol.VariableSymbol(
-                func.parameters().get(i).name(),
-                func.parameters().get(i).type(),
-                func.parameters().get(i).isReference()
-            );
-            paramSymbol.storeValue(executeExpression(arguments.get(i)));
-            currentScope.define(paramSymbol);
-        }
-
-        Object ret = null;
-        for (Statement stmt : func.body().statements()) {
-            ret = executeStatement(stmt);
-            // dont execute past return statement
-            if (ret != null) {
-                break;
+    private Declaration.FunctionDef findFunction(String name) {
+        for (Declaration decl : program.declarations()) {
+            if (decl instanceof Declaration.FunctionDef f) {
+                if (f.name().equals(name)) {
+                    return f;
+                }
             }
         }
-        currentScope = callerScope;
-        return ret;
+        return null;
     }
 
-    Object executeStatement(Statement stmt) throws SemanticException {
+    private Declaration.ClassDef findClass(String name) {
+        for (Declaration decl : program.declarations()) {
+            if (decl instanceof Declaration.ClassDef c) {
+                if (c.name().equals(name)) {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
+
+    private Object executeFunction(Declaration.FunctionDef func, List<Object> argValues) {
+        Environment funcEnv = new Environment(currentEnv);
+        Environment oldEnv = currentEnv;
+        currentEnv = funcEnv;
+
+        for (int i = 0; i < func.parameters().size(); i++) {
+            Parameter param = func.parameters().get(i);
+            Object value = argValues.get(i);
+            currentEnv.define(param.name(), value);
+        }
+
+        Object result = null;
+        try {
+            executeStatement(func.body());
+        } catch (ReturnException e) {
+            result = e.value;
+        }
+
+        currentEnv = oldEnv;
+        return result;
+    }
+
+    private void executeStatement(Statement stmt) {
         switch (stmt) {
+            case Statement.Block block -> {
+                Environment blockEnv = new Environment(currentEnv);
+                Environment oldEnv = currentEnv;
+                currentEnv = blockEnv;
+
+                for (Statement s : block.statements()) {
+                    executeStatement(s);
+                }
+
+                currentEnv = oldEnv;
+            }
+
             case Statement.VarDecl var -> {
-                // Variable in Scope aufnehmen
-                Symbol.VariableSymbol symbol = new Symbol.VariableSymbol(var);
-                currentScope.define(symbol);
+                Object defaultVal = getDefaultValue(var.type().name());
+                currentEnv.define(var.name(), defaultVal);
             }
 
             case Statement.VarDef var -> {
-                Symbol.VariableSymbol symbol = new Symbol.VariableSymbol(var);
-                symbol.storeValue(executeExpression(var.initializer()));
-                currentScope.define(symbol);
+                Object value = evaluateExpression(var.initializer());
+                currentEnv.define(var.name(), value);
+            }
+
+            case Statement.Assignment assign -> {
+                Object value = evaluateExpression(assign.value());
+                assignToLValue(assign.target(), value);
             }
 
             case Statement.FunctionCall call -> {
-                List<Type> argTypes = new ArrayList<>();
-                List<Boolean> argRefs = new ArrayList<>();
+                evaluateFunctionCall(call.functionName(), call.arguments());
+            }
 
-                for (Expression arg : call.arguments()) {
-                    Type argType = getTypeOfExpr(arg);
-                    argTypes.add(argType);
-                    argRefs.add(SemanticAnalyzer.isLValue(arg));
+            case Statement.If ifStmt -> {
+                Object condValue = evaluateExpression(ifStmt.condition());
+                if (toBoolean(condValue)) {
+                    executeStatement(ifStmt.thenBranch());
+                } else if (ifStmt.elseBranch() != null) {
+                    executeStatement(ifStmt.elseBranch());
                 }
-                Symbol.FunctionSymbol sym = currentScope.resolveFunction(call.functionName(), argTypes, argRefs);
-                boolean isPrim = handlePrimitive(sym, call.arguments());
-                if (!isPrim)  {
-                    executeFunc(sym, call.arguments());
+            }
+
+            case Statement.While whileStmt -> {
+                while (true) {
+                    Object condValue = evaluateExpression(whileStmt.condition());
+                    if (!toBoolean(condValue)) break;
+                    executeStatement(whileStmt.body());
                 }
             }
 
             case Statement.Return ret -> {
-                if (currentFunctionReturnType.name().equals("void")) return null;
-                return executeExpression(ret.value());
+                Object value = ret.value() != null
+                    ? evaluateExpression(ret.value())
+                    : null;
+                throw new ReturnException(value);
             }
 
-            case Statement.If branch -> {
-                Type condType = getTypeOfExpr(branch.condition());
-
-                Object ret;
-                if (ExpressionToBool(condType, branch.condition())) {
-                    ret = executeStatement(branch.thenBranch());
-                } else {
-                    ret = executeStatement(branch.elseBranch());
-                }
-                if (ret != null) {
-                    return  ret;
-                }
+            case Statement.Empty empty -> {
+                // Nichts tun
             }
-
-            case Statement.Empty e -> {}
-            case Statement.While loop -> {
-                Type condType = getTypeOfExpr(loop.condition());
-
-                while (ExpressionToBool(condType, loop.condition())) {
-                    Object ret = executeStatement(loop.body());
-                    if (ret !=  null) {
-                        return ret;
-                    }
-                }
-            }
-
-
-            case Statement.Block block -> {
-                SymbolTable callerScope = currentScope;
-                currentScope = currentScope.block();
-
-                Object ret = null;
-                for (var stamtement : block.statements()) {
-                    ret = executeStatement(stamtement);
-                    if (ret != null) {
-                        currentScope = callerScope;
-                        return ret;
-                    }
-                }
-                currentScope = callerScope;
-            }
-            default -> throw new UnsupportedOperationException("Unexpected value: " + stmt);
         }
-        return null;
     }
 
-    Type getTypeOfExpr(Expression expr) throws SemanticException {
+    private Object evaluateExpression(Expression expr) {
         return switch (expr) {
-            case Expression.IntLiteral lit -> new Type("int");
-            case Expression.BoolLiteral lit -> new Type("bool");
-            case Expression.StringLiteral lit -> new Type("string");
+            case Expression.IntLiteral lit -> lit.value();
+            case Expression.BoolLiteral lit -> lit.value();
+            case Expression.StringLiteral lit -> lit.value();
 
             case Expression.Variable var -> {
-                Symbol symbol = currentScope.resolve(var.name());
-
-                // Prüfe auch in Klassen-Feldern
-                if (symbol == null && currentClass != null) {
-                    Symbol.VariableSymbol field = currentClass.getField(var.name());
-                    if (field != null) {
-                        yield field.type();
+                // Lookup-Reihenfolge: lokale Variablen/Parameter -> eigene Members -> geerbte Members
+                try {
+                    yield currentEnv.get(var.name());
+                } catch (RuntimeException e) {
+                    // Falls nicht im lokalen Scope und wir in Methode: in Objekt-Feldern suchen
+                    if (currentObject != null && currentObject.hasField(var.name())) {
+                        yield currentObject.getField(var.name());
                     }
+                    throw e;
                 }
-
-                if (symbol == null) {
-                    throw new SemanticException("Undefined variable: " + var.name());
-                }
-
-                if (!(symbol instanceof Symbol.VariableSymbol)) {
-                    throw new SemanticException("Not a variable: " + var.name());
-                }
-
-                yield ((Symbol.VariableSymbol) symbol).type();
             }
 
             case Expression.MemberAccess access -> {
-                Type objType = getTypeOfExpr(access.object());
-
-                // Prüfe ob objType eine Klasse ist
-                Symbol classSymbol = globalSymbols.resolve(objType.name());
-                if (!(classSymbol instanceof Symbol.ClassSymbol)) {
-                    throw new SemanticException("Cannot access member of non-class type");
+                Object obj = evaluateExpression(access.object());
+                if (!(obj instanceof ObjectInstance objInst)) {
+                    throw new RuntimeException("Cannot access member of non-object");
                 }
-
-                Symbol.ClassSymbol cls = (Symbol.ClassSymbol) classSymbol;
-                Symbol.VariableSymbol field = cls.getField(access.memberName());
-
-                if (field == null) {
-                    throw new SemanticException("Field not found: " + access.memberName());
-                }
-
-                yield field.type();
+                yield objInst.getField(access.memberName());
             }
 
-            case Expression.FunctionCall call -> {
-                yield getTypeOfFunctionCall(call.functionName(), call.arguments());
-            }
+            case Expression.FunctionCall call ->
+                evaluateFunctionCall(call.functionName(), call.arguments());
 
             case Expression.MethodCall call -> {
-                Type objType = getTypeOfExpr(call.object());
-
-                Symbol classSymbol = globalSymbols.resolve(objType.name());
-                if (!(classSymbol instanceof Symbol.ClassSymbol)) {
-                    throw new SemanticException("Cannot call method on non-class type");
+                Object obj = evaluateExpression(call.object());
+                if (!(obj instanceof ObjectInstance objInst)) {
+                    throw new RuntimeException("Cannot call method on non-object");
                 }
-
-                Symbol.ClassSymbol cls = (Symbol.ClassSymbol) classSymbol;
-
-                List<Type> argTypes = new ArrayList<>();
-                List<Boolean> argRefs = new ArrayList<>();
-                for (Expression arg : call.arguments()) {
-                    argTypes.add(getTypeOfExpr(arg));
-                    argRefs.add(SemanticAnalyzer.isLValue(arg));
-                }
-
-                Symbol.FunctionSymbol method = cls.getMethod(call.methodName(), argTypes, argRefs);
-                if (method == null) {
-                    throw new SemanticException("Method not found: " + call.methodName());
-                }
-
-                yield method.returnType();
+                yield evaluateMethodCall(objInst, call.methodName(), call.arguments());
             }
 
             case Expression.BinaryOp binOp -> {
-                Type leftType = getTypeOfExpr(binOp.left());
-                Type rightType = getTypeOfExpr(binOp.right());
-
-                String op = binOp.operator();
-
-                if (op.equals("+")) {
-                    if (!((leftType.name().equals("int") && rightType.name().equals("int")) || (leftType.name().equals("string") && !rightType.name().equals("string")))) {
-                        throw new SemanticException("Arithmetic operators require int operands3 got " + leftType.name() + " and " + rightType.name());
-                    }
-                    yield leftType;
-                }
-
-                // Arithmetik: int only
-                if (op.matches("[\\-*/%]")) {
-                    if (!leftType.name().equals("int") || !rightType.name().equals("int")) {
-                        throw new SemanticException("Arithmetic operators require int operands2");
-                    }
-                    yield new Type("int");
-                }
-
-                // Vergleich
-                if (op.matches("==|!=|<|<=|>|>=")) {
-                    if (!SemanticAnalyzer.typesMatch(leftType, rightType)) {
-                        throw new SemanticException("Comparison requires same types");
-                    }
-                    yield new Type("bool");
-                }
-
-                // Logik
-                if (op.matches("&&|\\|\\|")) {
-                    if (!leftType.name().equals("bool") || !rightType.name().equals("bool")) {
-                        throw new SemanticException("Logical operators require bool operands");
-                    }
-                    yield new Type("bool");
-                }
-
-                throw new SemanticException("Unknown operator: " + op);
+                Object left = evaluateExpression(binOp.left());
+                Object right = evaluateExpression(binOp.right());
+                yield evaluateBinaryOp(binOp.operator(), left, right);
             }
 
             case Expression.UnaryOp unOp -> {
-                Type operandType = getTypeOfExpr(unOp.operand());
-                String op = unOp.operator();
-
-                if (op.equals("!")) {
-                    if (!operandType.name().equals("bool")) {
-                        throw new SemanticException("Logical NOT requires bool operand");
-                    }
-                    yield new Type("bool");
-                }
-
-                if (op.equals("+") || op.equals("-")) {
-                    if (!operandType.name().equals("int")) {
-                        throw new SemanticException("Unary +/- requires int operand");
-                    }
-                    yield new Type("int");
-                }
-
-                throw new SemanticException("Unknown unary operator: " + op);
+                Object operand = evaluateExpression(unOp.operand());
+                yield evaluateUnaryOp(unOp.operator(), operand);
             }
-
-            default -> {throw new SemanticException("shouldnt happen");}
         };
     }
 
-    private Type getTypeOfFunctionCall(String name, List<Expression> arguments) throws SemanticException {
-        // Argument-Typen ermitteln
-        List<Type> argTypes = new ArrayList<>();
-        List<Boolean> argRefs = new ArrayList<>();
-
+    private Object evaluateFunctionCall(String name, List<Expression> arguments) {
+        // Argumente auswerten
+        List<Object> argValues = new ArrayList<>();
         for (Expression arg : arguments) {
-            Type argType = getTypeOfExpr(arg);
-            argTypes.add(argType);
-            argRefs.add(SemanticAnalyzer.isLValue(arg));
+            argValues.add(evaluateExpression(arg));
         }
 
-        // Funktion suchen
-        Symbol.FunctionSymbol func = currentScope.resolveFunction(name, argTypes, argRefs);
-
-        // Prüfe auch in Klassen-Methoden
-        if (func == null && currentClass != null) {
-            func = currentClass.getMethod(name, argTypes, argRefs);
+        // Built-in Funktionen
+        if (name.equals("print_int") || name.equals("print_bool") ||
+            name.equals("print_string") || name.equals("print_char")) {
+            System.out.println(argValues.get(0));
+            return null;
         }
 
+        // User-defined Funktion
+        Declaration.FunctionDef func = findFunction(name);
         if (func == null) {
-            throw new SemanticException("Function not found: " + name +
-                " with signature " + new Signature(name, argTypes, argRefs));
+            throw new RuntimeException("Function not found: " + name);
         }
 
-        return func.returnType();
+        return executeFunction(func, argValues);
     }
 
-    Object executeExpression(Expression expr) throws SemanticException {
-        switch (expr) {
-            case Expression.Literal l -> {
-                return l.value();
-            }
-            case Expression.BinaryOp binaryOp -> {
-                if (typeOfExprStr(binaryOp.left()).equals("int") && typeOfExprStr(binaryOp.right()).equals("int")) {
-                    Integer l = (Integer) executeExpression(binaryOp.left()), r = (Integer) executeExpression(binaryOp.right());
-                    switch (binaryOp.operator()) {
-                        case "+" -> {
-                            return l + r;
-                        }
-                        case "-" -> {
-                            return  l - r;
-                        }
-                        case "*" -> {
-                            return  l * r;
-                        }
-                        case "/" -> {
-                            return  l / r;
-                        }
-                        case "%" -> {
-                            return l % r;
-                        }
-                        case ">" -> {
-                            return l > r;
-                        }
-                        case "<" -> {
-                            return l < r;
-                        }
-                        case "<=" -> {
-                            return l <= r;
-                        }
-                        case ">=" -> {
-                            return l >= r;
-                        }
-                        default -> {
-                            throw new UnsupportedOperationException(binaryOp.operator());
-                        }
-                    }
-                }
-                if (typeOfExprStr(binaryOp.left()).equals("string") && typeOfExprStr(binaryOp.right()).equals("string")) {
-                    String l = (String) executeExpression(binaryOp.left()), r = (String) executeExpression(binaryOp.right());
-                    if (binaryOp.operator().equals("+")) {
-                        return l + r;
-                    }
-                }
-            }
-            case Expression.FunctionCall call -> {
-                List<Type> argTypes = new ArrayList<>();
-                List<Boolean> argRefs = new ArrayList<>();
+    private Object evaluateMethodCall(ObjectInstance obj, String methodName, List<Expression> arguments) {
+        // Argumente auswerten
+        List<Object> argValues = new ArrayList<>();
+        for (Expression arg : arguments) {
+            argValues.add(evaluateExpression(arg));
+        }
 
-                for (Expression arg : call.arguments()) {
-                    Type argType = getTypeOfExpr(arg);
-                    argTypes.add(argType);
-                    argRefs.add(SemanticAnalyzer.isLValue(arg));
-                }
-                Symbol.FunctionSymbol sym = currentScope.resolveFunction(call.functionName(), argTypes, argRefs);
-                boolean isPrim = handlePrimitive(sym, call.arguments());
+        // Finde Methoden-Definition
+        Declaration.ClassDef classDef = findClass(obj.getClassSymbol().name());
+        if (classDef == null) {
+            throw new RuntimeException("Class not found: " + obj.getClassSymbol().name());
+        }
 
-                if (!isPrim)  {
-                    return executeFunc(sym, call.arguments());
-                }
-            }
-            case Expression.MemberAccess memberAccess -> {
-            }
-            case Expression.MethodCall methodCall -> {
-            }
-            case Expression.UnaryOp unaryOp -> {
-                switch (unaryOp.operator()) {
-                    case "-" -> {
-                        // TODO
-                    }
-                }
-            }
-            case Expression.Variable variable -> {
-                return currentScope.resolve(variable.name()).getValue();
+        // Suche Methode MIT TYPE-CHECKING (mit Vererbung)
+        ClassMember.MethodDef method = findMethod(classDef, methodName, argValues);
+        if (method == null) {
+            throw new RuntimeException("Method not found: " + methodName);
+        }
+
+        // Führe Methode aus mit currentObject gesetzt
+        Environment methodEnv = new Environment(currentEnv);
+        Environment oldEnv = currentEnv;
+        ObjectInstance oldObject = currentObject;
+        currentEnv = methodEnv;
+        currentObject = obj;
+
+        // Parameter binden
+        for (int i = 0; i < method.parameters().size(); i++) {
+            Parameter param = method.parameters().get(i);
+            Object value = argValues.get(i);
+            currentEnv.define(param.name(), value);
+        }
+
+        // Body ausführen
+        Object result = null;
+        try {
+            executeStatement(method.body());
+        } catch (ReturnException e) {
+            result = e.value;
+        }
+
+        currentEnv = oldEnv;
+        currentObject = oldObject;
+        return result;
+    }
+
+    private ClassMember.MethodDef findMethod(Declaration.ClassDef classDef, String name, List<Object> argValues) {
+        // Suche in aktueller Klasse
+        for (ClassMember.MethodDef method : classDef.methods()) {
+            if (method.name().equals(name) && matchesSignature(method.parameters(), argValues)) {
+                return method;
             }
         }
+
+        // Suche in Basisklasse
+        if (classDef.baseClass() != null) {
+            Declaration.ClassDef baseClass = findClass(classDef.baseClass());
+            if (baseClass != null) {
+                return findMethod(baseClass, name, argValues);
+            }
+        }
+
         return null;
     }
 
-    public void execute(ProgramNode node) throws SemanticException {
-        topLevel = node;
-        Declaration.FunctionDef entry = getMain(node);
+    private boolean matchesSignature(List<Parameter> parameters, List<Object> argValues) {
+        if (parameters.size() != argValues.size()) {
+            return false;
+        }
 
-        executeFunc(entry, List.of());
-    }
+        for (int i = 0; i < parameters.size(); i++) {
+            Parameter param = parameters.get(i);
+            Object arg = argValues.get(i);
 
-    String typeOfExprStr(Expression expr) throws SemanticException {
-       return getTypeOfExpr(expr).name();
-    }
+            String expectedType = param.type().name();
+            String actualType = getTypeOfValue(arg);
 
-    Declaration.FunctionDef getDefinitionFromCall(Statement.FunctionCall call) {
-        for (Declaration d : topLevel.declarations()) {
-            if (d instanceof Declaration.FunctionDef f) {
-                if (f.name() == call.functionName()) {
-                    return f;
-                }
+            if (!expectedType.equals(actualType)) {
+                return false;
             }
         }
-        return null;
 
+        return true;
     }
 
-    boolean ExpressionToBool(Type t, Expression e) throws SemanticException {
-        boolean descicion = switch (t.name()) {
-            case "string" -> !((String) executeExpression(e)).isEmpty();
-            case "bool" -> (Boolean) executeExpression(e);
-            case "char" -> ((Character) executeExpression(e)) != '\0';
-            case "int" -> ((Integer) executeExpression(e) != 0);
-            default -> throw new IllegalStateException("Illeagel type in if condition: " + condType.name());
+    private String getTypeOfValue(Object value) {
+        return switch (value) {
+            case Integer i -> "int";
+            case Boolean b -> "bool";
+            case Character c -> "char";
+            case String s -> "string";
+            case ObjectInstance obj -> obj.getClassSymbol().name();
+            case null -> throw new RuntimeException("Null value");
+            default -> throw new RuntimeException("Unknown value type: " + value.getClass());
         };
+    }
 
+    private Object evaluateBinaryOp(String op, Object left, Object right) {
+        if (left instanceof Integer l && right instanceof Integer r) {
+            return switch (op) {
+                case "+" -> l + r;
+                case "-" -> l - r;
+                case "*" -> l * r;
+                case "/" -> {
+                    if (r == 0) throw new RuntimeException("Division by zero");
+                    yield l / r;
+                }
+                case "%" -> {
+                    if (r == 0) throw new RuntimeException("Division by zero");
+                    yield l % r;
+                }
+                case "==" -> l.equals(r);
+                case "!=" -> !l.equals(r);
+                case "<" -> l < r;
+                case "<=" -> l <= r;
+                case ">" -> l > r;
+                case ">=" -> l >= r;
+                default -> throw new RuntimeException("Unknown operator: " + op);
+            };
+        }
+
+        if (left instanceof String l && right instanceof String r) {
+            return switch (op) {
+                case "+" -> l + r;
+                case "==" -> l.equals(r);
+                case "!=" -> !l.equals(r);
+                default -> throw new RuntimeException("Unknown operator: " + op);
+            };
+        }
+
+        if (left instanceof Boolean l && right instanceof Boolean r) {
+            return switch (op) {
+                case "&&" -> l && r;
+                case "||" -> l || r;
+                case "==" -> l.equals(r);
+                case "!=" -> !l.equals(r);
+                default -> throw new RuntimeException("Unknown operator: " + op);
+            };
+        }
+
+        if (left instanceof Character l && right instanceof Character r) {
+            return switch (op) {
+                case "==" -> l.equals(r);
+                case "!=" -> !l.equals(r);
+                case "<" -> l < r;
+                case "<=" -> l <= r;
+                case ">" -> l > r;
+                case ">=" -> l >= r;
+                default -> throw new RuntimeException("Unknown operator: " + op);
+            };
+        }
+
+        throw new RuntimeException("Type mismatch in binary operation");
+    }
+
+    private Object evaluateUnaryOp(String op, Object operand) {
+        return switch (op) {
+            case "-" -> -(Integer) operand;
+            case "+" -> (Integer) operand;
+            case "!" -> !(Boolean) operand;
+            default -> throw new RuntimeException("Unknown unary operator: " + op);
+        };
+    }
+
+    private void assignToLValue(Expression target, Object value) {
+        switch (target) {
+            case Expression.Variable var -> {
+                // Lookup-Reihenfolge: lokale Variablen/Parameter vor Objekt-Felder
+                try {
+                    currentEnv.set(var.name(), value);
+                } catch (RuntimeException e) {
+                    // Falls nicht im lokalen Scope: Objekt-Feld
+                    if (currentObject != null && currentObject.hasField(var.name())) {
+                        currentObject.setField(var.name(), value);
+                    } else {
+                        throw e;
+                    }
+                }
+            }
+            case Expression.MemberAccess access -> {
+                Object obj = evaluateExpression(access.object());
+                if (!(obj instanceof ObjectInstance objInst)) {
+                    throw new RuntimeException("Cannot assign to member of non-object");
+                }
+                objInst.setField(access.memberName(), value);
+            }
+            default -> throw new RuntimeException("Invalid lvalue");
+        }
+    }
+
+    private Object getDefaultValue(String typeName) {
+        return switch (typeName) {
+            case "int" -> 0;
+            case "bool" -> false;
+            case "char" -> '\0';
+            case "string" -> "";
+            default -> {
+                // Klassentyp - erstelle neues Objekt
+                Symbol symbol = globalSymbols.resolve(typeName);
+                if (symbol instanceof Symbol.ClassSymbol cls) {
+                    ObjectInstance obj = new ObjectInstance(cls);
+                    // Rufe parameterlosen Konstruktor auf
+                    executeConstructor(obj, List.of());
+                    yield obj;
+                }
+                throw new RuntimeException("Unknown type: " + typeName);
+            }
+        };
+    }
+
+    private void executeConstructor(ObjectInstance obj, List<Object> argValues) {
+        Declaration.ClassDef classDef = findClass(obj.getClassSymbol().name());
+        if (classDef == null) {
+            return; // Kein Konstruktor definiert - Default-Initialisierung ist schon passiert
+        }
+
+        // Erst Basis-Konstruktor aufrufen (implizit, parameterlos)
+        if (classDef.baseClass() != null) {
+            Symbol baseSymbol = globalSymbols.resolve(classDef.baseClass());
+            if (baseSymbol instanceof Symbol.ClassSymbol baseCls) {
+                Declaration.ClassDef baseClassDef = findClass(baseCls.name());
+                if (baseClassDef != null) {
+                    executeConstructorBody(obj, baseClassDef, List.of());
+                }
+            }
+        }
+
+        // Dann eigenen Konstruktor
+        executeConstructorBody(obj, classDef, argValues);
+    }
+
+    private void executeConstructorBody(ObjectInstance obj, Declaration.ClassDef classDef, List<Object> argValues) {
+        // Finde passenden Konstruktor MIT TYPE-CHECKING
+        ClassMember.ConstructorDef ctor = null;
+        for (ClassMember.ConstructorDef c : classDef.constructors()) {
+            if (matchesSignature(c.parameters(), argValues)) {
+                ctor = c;
+                break;
+            }
+        }
+
+        if (ctor == null) {
+            return; // Kein passender Konstruktor - Default-Initialisierung
+        }
+
+        // Führe Konstruktor aus
+        Environment ctorEnv = new Environment(currentEnv);
+        Environment oldEnv = currentEnv;
+        ObjectInstance oldObject = currentObject;
+        currentEnv = ctorEnv;
+        currentObject = obj;
+
+        // Parameter binden
+        for (int i = 0; i < ctor.parameters().size(); i++) {
+            Parameter param = ctor.parameters().get(i);
+            Object value = argValues.get(i);
+            currentEnv.define(param.name(), value);
+        }
+
+        try {
+            executeStatement(ctor.body());
+        } catch (ReturnException e) {
+            // Konstruktor sollte nicht returnen, aber falls doch...
+        }
+
+        currentEnv = oldEnv;
+        currentObject = oldObject;
+    }
+
+    private boolean toBoolean(Object value) {
+        return switch (value) {
+            case Boolean b -> b;
+            case Integer i -> i != 0;
+            case Character c -> c != '\0';
+            case String s -> !s.isEmpty();
+            default -> throw new RuntimeException("Cannot convert to boolean: " + value.getClass());
+        };
+    }
+
+    // Exception für Return-Statements (Control-Flow)
+    private static class ReturnException extends RuntimeException {
+        final Object value;
+        ReturnException(Object value) {
+            super(null, null, false, false);
+            this.value = value;
+        }
     }
 }
