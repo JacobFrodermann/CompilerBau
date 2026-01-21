@@ -95,7 +95,13 @@ public class Executor {
 
                 currentEnv = oldEnv;
             }
-
+            case Statement.MethodCall call -> {
+                Object obj = evaluateExpression(call.object());
+                if (!(obj instanceof ObjectInstance objInst)) {
+                    throw new RuntimeException("Cannot call method on non-object");
+                }
+                evaluateMethodCall(objInst, call.methodName(), call.arguments());
+            }
             case Statement.VarDecl var -> {
                 Object defaultVal = getDefaultValue(var.type().name());
                 currentEnv.define(var.name(), defaultVal);

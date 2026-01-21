@@ -118,6 +118,23 @@ public class ASTPrinter {
         }
         indent--;
       }
+        case Statement.MethodCall m -> {
+            line("MethodCall: " + m.methodName());
+            indent++;
+            line("Object:");
+            indent++;
+            printNode(m.object());
+            indent--;
+            if (!m.arguments().isEmpty()) {
+                line("Arguments:");
+                indent++;
+                for (var arg : m.arguments()) {
+                    printNode(arg);
+                }
+                indent--;
+            }
+            indent--;
+        }
       case Statement.VarDecl v -> {
         String ref = v.isReference() ? "&" : "";
         line("VarDecl: " + v.type().name() + ref + " " + v.name());

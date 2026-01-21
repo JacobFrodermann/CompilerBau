@@ -170,11 +170,11 @@ public class ASTBuilder extends cppBaseVisitor<ASTNode> {
     }
 
     @Override
-    public Statement.FunctionCall visitFunctionCallStmt(cppParser.FunctionCallStmtContext ctx) {
+    public Statement visitFunctionCallStmt(cppParser.FunctionCallStmtContext ctx) {
         if (ctx.memberAccess() != null) {
             Expression.MemberAccess access = visitMemberAccess(ctx.memberAccess());
             List<Expression> args = parseCallArgs(ctx.callArgs());
-            return new Statement.FunctionCall(access.memberName(), args);
+            return new Statement.MethodCall(access.object(), access.memberName(), args);
         } else {
             String name = ctx.OBJ_NAME().getText();
             List<Expression> args = parseCallArgs(ctx.callArgs());
