@@ -97,21 +97,46 @@ public class SymbolTable {
         return null;
     }
 
-    public Symbol.FunctionSymbol resolveFunction(String name, List<Type> argTypes, List<Boolean> argRefs) {
+    public Symbol.FunctionSymbol resolveFunction(String name, List<Type> argTypes, List<Boolean> argIsLValue) {
         List<Symbol.FunctionSymbol> overloads = functions.get(name);
         if (overloads != null) {
-            Signature sig = new Signature(name, argTypes, argRefs);
             for (Symbol.FunctionSymbol func : overloads) {
-                if (func.signature().equals(sig)) {
+                if (matchesCall(func, argTypes, argIsLValue)) {
                     return func;
                 }
             }
         }
 
         if (parent != null) {
-            return parent.resolveFunction(name, argTypes, argRefs);
+            return parent.resolveFunction(name, argTypes, argIsLValue);
         }
         return null;
+    }
+
+    private boolean matchesCall(Symbol.FunctionSymbol func, List<Type> argTypes, List<Boolean> argIsLValue) {
+        if (func.parameters.size() != argTypes.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < func.parameters.size(); i++) {
+            Parameter param = func.parameters.get(i);
+            Type argType = argTypes.get(i);
+            boolean isLVal = argIsLValue.get(i);
+
+            // Typ-Check
+            if (!param.type().name().equals(argType.name())) {
+                return false;
+            }
+
+            // Referenz-Check:
+            // params MIT & braucht LValue ........... wäh weil wir ja eine reference erwarten
+            // params OHNE & akzeptiert beides (LValue wird kopiert, RValue direkt verwendet) ... ich hoffe ich habe das richtig verstanden, bin bissl verwirrt
+            if (param.isReference() && !isLVal) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public SymbolTable block() {

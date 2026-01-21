@@ -16,7 +16,6 @@ public sealed interface Symbol {
     Object getValue();
     void storeValue(Object val);
 
-    // Variable Symbol
     final class VariableSymbol implements Symbol {
         public String name;
         public Type type;
@@ -24,9 +23,9 @@ public sealed interface Symbol {
         private Object value;
 
         public VariableSymbol(String name, Type type, boolean reference) {
-           this.name = name;
-           this.type = type;
-           this.isReference = reference;
+            this.name = name;
+            this.type = type;
+            this.isReference = reference;
         }
 
         public  VariableSymbol(Statement.VarDecl decl) {
@@ -60,7 +59,6 @@ public sealed interface Symbol {
         public boolean isReference() { return  isReference; }
     }
 
-    // Function Symbol
     public final class FunctionSymbol implements Symbol {
         public String name;
         public Type returnType;
@@ -103,7 +101,6 @@ public sealed interface Symbol {
         public Type returnType() { return  returnType; }
     }
 
-    // Class Symbol
     final class ClassSymbol implements Symbol {
         private final String name;
         private final String baseClassName;
@@ -112,7 +109,7 @@ public sealed interface Symbol {
 
         private final Map<String, VariableSymbol> fields = new HashMap<>();
         private final Map<Signature, FunctionSymbol> constructors = new HashMap<>();
-        private final Map<String, List<FunctionSymbol>> methods = new HashMap<>();  // Name -> List für Overloading
+        private final Map<String, List<FunctionSymbol>> methods = new HashMap<>();
         private final Map<String, Boolean> virtualMethods = new HashMap<>();
 
         public ClassSymbol(String name, String baseClassName) {
@@ -145,7 +142,6 @@ public sealed interface Symbol {
         public void addMethod(String name, FunctionSymbol method, boolean isVirtual) throws SemanticException {
             List<FunctionSymbol> overloads = methods.computeIfAbsent(name, k -> new ArrayList<>());
 
-            // Prüfe auf doppelte Signatur
             Signature newSig = method.signature();
             for (FunctionSymbol existing : overloads) {
                 if (existing.signature().equals(newSig)) {
@@ -164,22 +160,42 @@ public sealed interface Symbol {
             return null;
         }
 
-        public FunctionSymbol getMethod(String name, List<Type> argTypes, List<Boolean> argRefs) {
+        public FunctionSymbol getMethod(String name, List<Type> argTypes, List<Boolean> argIsLValue) {
             List<FunctionSymbol> overloads = methods.get(name);
             if (overloads != null) {
-                Signature sig = new Signature(name, argTypes, argRefs);
                 for (FunctionSymbol method : overloads) {
-                    if (method.signature().equals(sig)) {
+                    if (matchesCall(method, argTypes, argIsLValue)) {
                         return method;
                     }
                 }
             }
 
-            // Suche in Basisklasse
             if (baseClass != null) {
-                return baseClass.getMethod(name, argTypes, argRefs);
+                return baseClass.getMethod(name, argTypes, argIsLValue);
             }
             return null;
+        }
+
+        private boolean matchesCall(FunctionSymbol func, List<Type> argTypes, List<Boolean> argIsLValue) {
+            if (func.parameters.size() != argTypes.size()) {
+                return false;
+            }
+
+            for (int i = 0; i < func.parameters.size(); i++) {
+                Parameter param = func.parameters.get(i);
+                Type argType = argTypes.get(i);
+                boolean isLVal = argIsLValue.get(i);
+
+                if (!param.type().name().equals(argType.name())) {
+                    return false;
+                }
+
+                if (param.isReference() && !isLVal) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public boolean isVirtual(String methodName) {
