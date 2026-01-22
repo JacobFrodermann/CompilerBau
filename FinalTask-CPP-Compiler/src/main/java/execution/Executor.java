@@ -34,12 +34,6 @@ public class Executor {
     this.program = new ProgramNode(declarations);
   }
 
-  public void executeMain() {
-    Declaration.FunctionDef main = findMain();
-    if (main != null) {
-      executeFunction(main, List.of());
-    }
-  }
 
   private Declaration.FunctionDef findMain() {
     for (Declaration decl : declarations) {
