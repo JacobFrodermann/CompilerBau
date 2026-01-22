@@ -188,9 +188,27 @@ public class Executor {
       }
 
       case Expression.BinaryOp binOp -> {
-        Object left = evaluateExpression(binOp.left());
-        Object right = evaluateExpression(binOp.right());
-        yield evaluateBinaryOp(binOp.operator(), left, right);
+        // Short-circuit evaluation for && and ||
+        String op = binOp.operator();
+        if (op.equals("&&")) {
+          Object left = evaluateExpression(binOp.left());
+          if (left instanceof Boolean b && !b) {
+            yield false; // Short-circuit: false && x = false
+          }
+          Object right = evaluateExpression(binOp.right());
+          yield (Boolean) left && (Boolean) right;
+        } else if (op.equals("||")) {
+          Object left = evaluateExpression(binOp.left());
+          if (left instanceof Boolean b && b) {
+            yield true; // Short-circuit: true || x = true
+          }
+          Object right = evaluateExpression(binOp.right());
+          yield (Boolean) left || (Boolean) right;
+        } else {
+          Object left = evaluateExpression(binOp.left());
+          Object right = evaluateExpression(binOp.right());
+          yield evaluateBinaryOp(op, left, right);
+        }
       }
 
       case Expression.UnaryOp unOp -> {
