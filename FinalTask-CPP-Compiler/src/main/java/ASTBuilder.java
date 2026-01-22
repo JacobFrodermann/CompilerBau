@@ -350,7 +350,7 @@ public class ASTBuilder extends cppBaseVisitor<ASTNode> {
     if (ctx.STRING_LITERAL() != null) {
       String text = ctx.STRING_LITERAL().getText();
       String value = text.substring(1, text.length() - 1);
-      return new Expression.StringLiteral(value);
+      return new Expression.StringLiteral(parseEscapeString(value));
     } else if (ctx.CHAR_LITERAL() != null) {
       String text = ctx.CHAR_LITERAL().getText();
       String value = text.substring(1, text.length() - 1);
@@ -372,11 +372,37 @@ public class ASTBuilder extends cppBaseVisitor<ASTNode> {
         case 'r' -> '\r';
         case '\\' -> '\\';
         case '\'' -> '\'';
+        case '"' -> '"';
         case '0' -> '\0';
         default -> s.charAt(1);
       };
     }
     return s.charAt(0);
+  }
+
+  private String parseEscapeString(String s) {
+    StringBuilder result = new StringBuilder();
+    for (int i = 0; i < s.length(); i++) {
+      char c = s.charAt(i);
+      if (c == '\\' && i + 1 < s.length()) {
+        char next = s.charAt(i + 1);
+        char escaped = switch (next) {
+          case 'n' -> '\n';
+          case 't' -> '\t';
+          case 'r' -> '\r';
+          case '\\' -> '\\';
+          case '"' -> '"';
+          case '\'' -> '\'';
+          case '0' -> '\0';
+          default -> next;
+        };
+        result.append(escaped);
+        i++; // Skip the next character
+      } else {
+        result.append(c);
+      }
+    }
+    return result.toString();
   }
 
   @Override
