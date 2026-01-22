@@ -37,6 +37,27 @@ public class SymbolTable {
           new Symbol.FunctionSymbol(
               "print_char",
               new Type("void"),
+              List.of(new Parameter(new Type("char"), false, "value"))),
+          // Overloaded print() function
+          new Symbol.FunctionSymbol(
+              "print",
+              new Type("void"),
+              List.of(new Parameter(new Type("bool"), false, "value"))),
+          new Symbol.FunctionSymbol(
+              "print",
+              new Type("void"),
+              List.of(new Parameter(new Type("int"), false, "value"))),
+          new Symbol.FunctionSymbol(
+              "print",
+              new Type("void"),
+              List.of(new Parameter(new Type("string"), false, "value"))),
+          new Symbol.FunctionSymbol(
+              "print",
+              new Type("void"),
+              List.of(new Parameter(new Type("string"), true, "value"))),
+          new Symbol.FunctionSymbol(
+              "print",
+              new Type("void"),
               List.of(new Parameter(new Type("char"), false, "value"))));
 
   public SymbolTable(String scopeName) {

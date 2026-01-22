@@ -264,7 +264,8 @@ public class Executor {
     if (name.equals("print_int")
         || name.equals("print_bool")
         || name.equals("print_string")
-        || name.equals("print_char")) {
+        || name.equals("print_char")
+        || name.equals("print")) {
       System.out.println(argValues.get(0));
       return null;
     }
