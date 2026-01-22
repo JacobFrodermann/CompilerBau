@@ -171,14 +171,37 @@ public class ASTBuilder extends cppBaseVisitor<ASTNode> {
 
   @Override
   public Statement visitFunctionCallStmt(cppParser.FunctionCallStmtContext ctx) {
-    if (ctx.memberAccess() != null) {
-      Expression.MemberAccess access = visitMemberAccess(ctx.memberAccess());
-      List<Expression> args = parseCallArgs(ctx.callArgs());
-      return new Statement.MethodCall(access.object(), access.memberName(), args);
+    // Start with the identifier
+    Expression result = new Expression.Variable(ctx.OBJ_NAME().getText());
+
+    // Apply each postfix operation in sequence
+    for (var postfixOp : ctx.postfixOp()) {
+      if (postfixOp.callArgs() != null) {
+        // Function/method call
+        List<Expression> args = parseCallArgs(postfixOp.callArgs());
+        if (result instanceof Expression.MemberAccess access) {
+          // Method call: obj.method(args)
+          result = new Expression.MethodCall(access.object(), access.memberName(), args);
+        } else if (result instanceof Expression.Variable var) {
+          // Function call: func(args)
+          result = new Expression.FunctionCall(var.name(), args);
+        } else {
+          throw new RuntimeException("Cannot call on expression: " + result);
+        }
+      } else {
+        // Member access: .memberName
+        String memberName = postfixOp.OBJ_NAME().getText();
+        result = new Expression.MemberAccess(result, memberName);
+      }
+    }
+
+    // Convert the final expression to a statement
+    if (result instanceof Expression.MethodCall mc) {
+      return new Statement.MethodCall(mc.object(), mc.methodName(), mc.arguments());
+    } else if (result instanceof Expression.FunctionCall fc) {
+      return new Statement.FunctionCall(fc.functionName(), fc.arguments());
     } else {
-      String name = ctx.OBJ_NAME().getText();
-      List<Expression> args = parseCallArgs(ctx.callArgs());
-      return new Statement.FunctionCall(name, args);
+      throw new RuntimeException("Function call statement must end with a call");
     }
   }
 
@@ -283,12 +306,37 @@ public class ASTBuilder extends cppBaseVisitor<ASTNode> {
 
   @Override
   public Expression visitPrimary(cppParser.PrimaryContext ctx) {
+    // Start with the primaryAtom
+    Expression result = visitPrimaryAtom(ctx.primaryAtom());
+
+    // Apply each postfix operation in sequence
+    for (var postfixOp : ctx.postfixOp()) {
+      if (postfixOp.callArgs() != null) {
+        // Function/method call
+        List<Expression> args = parseCallArgs(postfixOp.callArgs());
+        if (result instanceof Expression.MemberAccess access) {
+          // Method call: obj.method(args)
+          result = new Expression.MethodCall(access.object(), access.memberName(), args);
+        } else if (result instanceof Expression.Variable var) {
+          // Function call: func(args)
+          result = new Expression.FunctionCall(var.name(), args);
+        } else {
+          // Chained call: expr.method(args) where expr is the previous result
+          throw new RuntimeException("Cannot call on expression: " + result);
+        }
+      } else {
+        // Member access: .memberName
+        String memberName = postfixOp.OBJ_NAME().getText();
+        result = new Expression.MemberAccess(result, memberName);
+      }
+    }
+
+    return result;
+  }
+
+  public Expression visitPrimaryAtom(cppParser.PrimaryAtomContext ctx) {
     if (ctx.literal() != null) {
       return visitLiteral(ctx.literal());
-    } else if (ctx.functionCallExpr() != null) {
-      return visitFunctionCallExpr(ctx.functionCallExpr());
-    } else if (ctx.memberAccess() != null) {
-      return visitMemberAccess(ctx.memberAccess());
     } else if (ctx.OBJ_NAME() != null) {
       return new Expression.Variable(ctx.OBJ_NAME().getText());
     } else {
@@ -342,28 +390,14 @@ public class ASTBuilder extends cppBaseVisitor<ASTNode> {
   }
 
   @Override
-  public Expression visitFunctionCallExpr(cppParser.FunctionCallExprContext ctx) {
-    //  ctx kann entweder OBJ_NAME oder memberAccess haben
-    if (ctx.memberAccess() != null) {
-      // Methodenaufruf: p.getX()
-      Expression.MemberAccess access = visitMemberAccess(ctx.memberAccess());
-      List<Expression> args = parseCallArgs(ctx.callArgs());
-      // Erstelle MethodCall statt FunctionCall ... leider bissl doof mit return type nur
-      // Expression, evtl hätte man einen gemeinsamen parent typ machen sollen
-      return new Expression.MethodCall(access.object(), access.memberName(), args);
-    } else {
-      // Normaler Funktionsaufruf: add()
-      String name = ctx.OBJ_NAME().getText();
-      List<Expression> args = parseCallArgs(ctx.callArgs());
-      return new Expression.FunctionCall(name, args);
-    }
-  }
-
-  @Override
   public Expression.MemberAccess visitMemberAccess(cppParser.MemberAccessContext ctx) {
+    // Build chained member access: a.b.c becomes MemberAccess(MemberAccess(a, b), c)
     Expression object = new Expression.Variable(ctx.OBJ_NAME(0).getText());
-    String member = ctx.OBJ_NAME(1).getText();
-    return new Expression.MemberAccess(object, member);
+    for (int i = 1; i < ctx.OBJ_NAME().size(); i++) {
+      String member = ctx.OBJ_NAME(i).getText();
+      object = new Expression.MemberAccess(object, member);
+    }
+    return (Expression.MemberAccess) object;
   }
 
   // Helper: Parse call arguments (für Funktionsaufrufe)

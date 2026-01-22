@@ -14,7 +14,7 @@ assignment: (memberAccess | OBJ_NAME) '=' value ';';
 
 functionDef: OBJ_NAME OBJ_NAME params block;
 functionDecl: OBJ_NAME OBJ_NAME params ';';
-functionCallStmt: (OBJ_NAME | memberAccess) callArgs ';';
+functionCallStmt: OBJ_NAME postfixOp+ ';';
 
 params: '(' (param (',' param)*)? ')';
 param: OBJ_NAME '&'? OBJ_NAME;
@@ -52,7 +52,7 @@ logicalAnd: comparison ('&&' comparison)*;
 
 comparison: math (('==' | '<=' | '>=' | '!=' | '>' | '<') math)?;
 
-memberAccess: OBJ_NAME '.' OBJ_NAME;
+memberAccess: OBJ_NAME ('.' OBJ_NAME)+;
 
 // literals
 
@@ -70,9 +70,11 @@ multiplicative: unary (('*' | '/' | '%') unary)*;
 
 unary: ('-' | '!')? primary;
 
-primary: (functionCallExpr | literal | OBJ_NAME | memberAccess | '(' value ')');
+primary: primaryAtom postfixOp*;
 
-functionCallExpr: (OBJ_NAME | memberAccess) callArgs;
+primaryAtom: literal | OBJ_NAME | '(' value ')';
+
+postfixOp: '.' OBJ_NAME | callArgs;
 
 // return
 
