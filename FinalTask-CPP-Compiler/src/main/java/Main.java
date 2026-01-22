@@ -18,22 +18,9 @@ import symbols.SymbolTable;
 
 public class Main {
   public static void main(String[] args) {
-    // Always run tests first
     runTests();
-
-    System.out.println("\n" + "=".repeat(50));
-    System.out.println("Tests completed. Starting REPL...");
-    System.out.println("=".repeat(50) + "\n");
-
-    // Then launch the REPL (without passing --test or other flags)
-    String[] replArgs = new String[0];
-    for (String arg : args) {
-      if (!arg.startsWith("--") && !arg.startsWith("-")) {
-        replArgs = new String[] {arg};
-        break;
-      }
-    }
-    new REPL().run(replArgs);
+    System.out.println("\n" + "=".repeat(50) + "\n");
+    new REPL().run();
   }
 
   static void runTests() {

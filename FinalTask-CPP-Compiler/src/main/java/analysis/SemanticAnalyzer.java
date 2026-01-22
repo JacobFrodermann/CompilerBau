@@ -22,7 +22,7 @@ public class SemanticAnalyzer {
     }
   }
 
-  private void analyzeDeclaration(Declaration decl) throws SemanticException {
+  public void analyzeDeclaration(Declaration decl) throws SemanticException {
     switch (decl) {
       case Declaration.FunctionDef func -> analyzeFunctionDef(func);
       case Declaration.ClassDef cls -> analyzeClassDef(cls);

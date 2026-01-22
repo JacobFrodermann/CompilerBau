@@ -28,18 +28,17 @@ public class Executor {
     executeFunction(main, List.of());
   }
 
-  public void executeWithDeclarations(List<Declaration> decls) {
-    this.declarations = new ArrayList<>(decls);
-    this.program = new ProgramNode(decls);
-    Declaration.FunctionDef main = findMain();
-    if (main != null) {
-      executeFunction(main, List.of());
-    }
-  }
 
   public void addDeclarations(List<Declaration> decls) {
     this.declarations.addAll(decls);
     this.program = new ProgramNode(declarations);
+  }
+
+  public void executeMain() {
+    Declaration.FunctionDef main = findMain();
+    if (main != null) {
+      executeFunction(main, List.of());
+    }
   }
 
   private Declaration.FunctionDef findMain() {
