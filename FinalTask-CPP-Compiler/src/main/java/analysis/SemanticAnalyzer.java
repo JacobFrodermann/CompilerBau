@@ -153,7 +153,7 @@ public class SemanticAnalyzer {
     currentFunctionReturnType = null;
   }
 
-  private void analyzeStatement(Statement stmt) throws SemanticException {
+  public void analyzeStatement(Statement stmt) throws SemanticException {
     switch (stmt) {
       case Statement.Block block -> {
         // Neuer Scope für Block
@@ -286,7 +286,7 @@ public class SemanticAnalyzer {
     }
   }
 
-  private Type analyzeExpression(Expression expr) throws SemanticException {
+  public Type analyzeExpression(Expression expr) throws SemanticException {
     return switch (expr) {
       case Expression.IntLiteral lit -> new Type("int");
       case Expression.BoolLiteral lit -> new Type("bool");

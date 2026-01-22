@@ -11,6 +11,7 @@ public class Executor {
   private Environment currentEnv;
   private ProgramNode program;
   private ObjectInstance currentObject;
+  private List<Declaration> declarations = new ArrayList<>();
 
   public Executor(SymbolTable globalSymbols) {
     this.globalSymbols = globalSymbols;
@@ -19,6 +20,7 @@ public class Executor {
 
   public void execute(ProgramNode program) {
     this.program = program;
+    this.declarations = new ArrayList<>(program.declarations());
     Declaration.FunctionDef main = findMain();
     if (main == null) {
       throw new RuntimeException("No main() function found");
@@ -26,8 +28,22 @@ public class Executor {
     executeFunction(main, List.of());
   }
 
+  public void executeWithDeclarations(List<Declaration> decls) {
+    this.declarations = new ArrayList<>(decls);
+    this.program = new ProgramNode(decls);
+    Declaration.FunctionDef main = findMain();
+    if (main != null) {
+      executeFunction(main, List.of());
+    }
+  }
+
+  public void addDeclarations(List<Declaration> decls) {
+    this.declarations.addAll(decls);
+    this.program = new ProgramNode(declarations);
+  }
+
   private Declaration.FunctionDef findMain() {
-    for (Declaration decl : program.declarations()) {
+    for (Declaration decl : declarations) {
       if (decl instanceof Declaration.FunctionDef f) {
         if (f.name().equals("main")) {
           return f;
@@ -38,7 +54,7 @@ public class Executor {
   }
 
   private Declaration.FunctionDef findFunction(String name) {
-    for (Declaration decl : program.declarations()) {
+    for (Declaration decl : declarations) {
       if (decl instanceof Declaration.FunctionDef f) {
         if (f.name().equals(name)) {
           return f;
@@ -49,7 +65,7 @@ public class Executor {
   }
 
   private Declaration.ClassDef findClass(String name) {
-    for (Declaration decl : program.declarations()) {
+    for (Declaration decl : declarations) {
       if (decl instanceof Declaration.ClassDef c) {
         if (c.name().equals(name)) {
           return c;
@@ -72,7 +88,7 @@ public class Executor {
 
     Object result = null;
     try {
-      executeStatement(func.body());
+      executeStatementInternal(func.body());
     } catch (ReturnException e) {
       result = e.value;
     }
@@ -81,7 +97,33 @@ public class Executor {
     return result;
   }
 
-  private void executeStatement(Statement stmt) {
+  public void executeStatement(Statement stmt) {
+    executeStatementInternal(stmt);
+  }
+
+  public Object executeStatementWithResult(Statement stmt) {
+    return switch (stmt) {
+      case Statement.Assignment assign -> {
+        Object value = evaluateExpression(assign.value());
+        assignToLValue(assign.target(), value);
+        yield value;
+      }
+      case Statement.FunctionCall call -> evaluateFunctionCall(call.functionName(), call.arguments());
+      case Statement.MethodCall call -> {
+        Object obj = evaluateExpression(call.object());
+        if (!(obj instanceof ObjectInstance objInst)) {
+          throw new RuntimeException("Cannot call method on non-object");
+        }
+        yield evaluateMethodCall(objInst, call.methodName(), call.arguments());
+      }
+      default -> {
+        executeStatementInternal(stmt);
+        yield null;
+      }
+    };
+  }
+
+  private void executeStatementInternal(Statement stmt) {
     switch (stmt) {
       case Statement.Block block -> {
         Environment blockEnv = new Environment(currentEnv);
@@ -89,7 +131,7 @@ public class Executor {
         currentEnv = blockEnv;
 
         for (Statement s : block.statements()) {
-          executeStatement(s);
+          executeStatementInternal(s);
         }
 
         currentEnv = oldEnv;
@@ -123,9 +165,9 @@ public class Executor {
       case Statement.If ifStmt -> {
         Object condValue = evaluateExpression(ifStmt.condition());
         if (toBoolean(condValue)) {
-          executeStatement(ifStmt.thenBranch());
+          executeStatementInternal(ifStmt.thenBranch());
         } else if (ifStmt.elseBranch() != null) {
-          executeStatement(ifStmt.elseBranch());
+          executeStatementInternal(ifStmt.elseBranch());
         }
       }
 
@@ -133,7 +175,7 @@ public class Executor {
         while (true) {
           Object condValue = evaluateExpression(whileStmt.condition());
           if (!toBoolean(condValue)) break;
-          executeStatement(whileStmt.body());
+          executeStatementInternal(whileStmt.body());
         }
       }
 
@@ -288,7 +330,7 @@ public class Executor {
     // Body ausführen
     Object result = null;
     try {
-      executeStatement(method.body());
+      executeStatementInternal(method.body());
     } catch (ReturnException e) {
       result = e.value;
     }
@@ -514,7 +556,7 @@ public class Executor {
     }
 
     try {
-      executeStatement(ctor.body());
+      executeStatementInternal(ctor.body());
     } catch (ReturnException e) {
       // Konstruktor sollte nicht returnen, aber falls doch...
     }

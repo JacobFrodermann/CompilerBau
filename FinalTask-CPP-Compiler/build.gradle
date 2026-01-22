@@ -38,6 +38,10 @@ application {
 
 tasks.named('run') {
     standardInput = System.in
+    // Pass --test to run tests, or no args to run REPL
+    // Use: ./gradlew run --args="--test" for tests
+    // Use: ./gradlew run for REPL
+    // Use: ./gradlew run --args="file.cpp" to load a file and enter REPL
 }
 
 test {
