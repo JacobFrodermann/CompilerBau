@@ -1,3 +1,4 @@
 build/
 src/main/antlr/.antlr/
 .gradle/
+bin/
